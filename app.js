@@ -4,9 +4,14 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const connectToDB = require('./db/connection');
-const userRouter = require('./routes/user.routes');
 const cookieParser = require('cookie-parser');
-connectToDB(); // Db connection 
+
+/** Routes */
+const userRouter = require('./routes/user.routes');
+const captainRouter = require('./routes/captain.routes')
+
+/** Database connection. */
+connectToDB(); 
 
 
 // Basic Middlewares
@@ -21,5 +26,6 @@ app.get("/" , (req, res)=>{
 })
 
 app.use('/user', userRouter);
+app.use('/captain' , captainRouter );
 
 module.exports = app;

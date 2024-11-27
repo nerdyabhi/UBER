@@ -1,3 +1,4 @@
+const blackListedTokenModel = require('../models/blackListedTokens.model');
 const userModel = require('../models/user.model')
 const userServices = require('../services/user.service');
 
@@ -19,7 +20,7 @@ const registerUserHandler = async({fullName , email , password} , req, res)=>{
   }
 }
 
-
+  
 /*@Post /user/login handler */
 const loginUserHandler = async({email  , password} , req, res) =>{
     const user = await userModel.findOne({email}).select('+password');
@@ -45,9 +46,18 @@ const getUserProfile = async(req , res )=>{
     return res.status(200).json({msg:"Success" , user:req.user});
 }
 
+const logoutUserHandler = async(req , res)=>{
+  const token = req.cookies.token || req.headers.authorization.split(' ')[1];
+  if(!token) res.status(401).json({msg:'User not logged in '});
+  res.clearCookie('token');
+  await blackListedTokenModel.create({token});
+
+  res.status(200).json({msg:'Successfully Logged out'})
+}
 
 module.exports = {
     registerUserHandler,
     loginUserHandler,
-    getUserProfile
+    getUserProfile,
+    logoutUserHandler,
 }

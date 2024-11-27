@@ -15,7 +15,7 @@ Object containing user registration data:
 
 ## Core Functions
 
-### `registerUser(userData, req, res)`
+### `registerUserHandler(userData, req, res)`
 Handles the user registration process.
 
 **Parameters:**
@@ -36,16 +36,52 @@ Zod validation schema for user registration with the following checks:
 - Email format validation
 - Password length requirements
 
-
-
-# POST /login
+## POST user/login
 
 Authenticates a user and generates an authentication token.
 
-## Request Body
+### Request Body
 - `email` (string): User's email address
 - `password` (string): User's password
 
-## Success Response
+### Success Response
+
 - Status Code: 200
 - Content:
+    - `token`: Authentication token (string)
+    - `user`: User data (object)
+
+### Error Responses
+- 400: Please send valid data or Invalid username or password
+- 500: Error registering captain
+
+### API Documentation
+
+#### POST captain/register
+Register a new captain
+
+**Access**: Public
+
+**Parameters**:
+- `req`: Express request object
+    - `req.body`: Captain registration data
+- `res`: Express response object
+
+**Responses**:
+- 200: Successfully registered the user with token and captain data
+- 400: Error, Please Provide Valid Credentials
+- 500: Error registering captain
+
+#### POST captain/login
+Login a captain
+
+**Access**: Public
+
+**Parameters**:
+- `req`: Express request object
+    - `req.body`: Captain login data
+- `res`: Express response object
+
+**Responses**:
+- 200: Successfully logged in the user with token and captain data
+- 400: Please send valid data or Invalid username or password

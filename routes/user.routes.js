@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const {userRegistrationSchema  , userLoginSchema} = require( '../validation/user.validation');
-const {registerUserHandler , loginUserHandler , getUserProfile} = require('../controllers/user.controller');
+const {registerUserHandler , loginUserHandler , getUserProfile , logoutUserHandler} = require('../controllers/user.controller');
 const authUser = require('../middlewares/auth.middleware')
+
+
+/* /user/register Route  */
 router.post("/register", (req, res) => {
 
     // Validate Using UserSchema Here !!!!!
@@ -21,6 +24,8 @@ router.post("/register", (req, res) => {
     
 });
 
+
+/* /user/login Route */
 router.post("/login" , (req, res)=>{
     // Validation 
     const result = userLoginSchema.safeParse(req.body);
@@ -38,5 +43,9 @@ router.post("/login" , (req, res)=>{
 })
 
 
+/* /user/profile Route */
 router.get("/profile" ,authUser ,  getUserProfile)
 module.exports = router;
+
+/* /user/logout Route */
+router.get('/logout' , authUser , logoutUserHandler);
