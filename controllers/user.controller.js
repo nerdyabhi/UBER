@@ -10,7 +10,7 @@ const registerUserHandler = async({fullName , email , password} , req, res)=>{
     const user = await userServices.createUser({fullName , email , password:hashedPassword});
 
     const token  = user.generateAuthToken();
-    res.status(201).json({token , user})
+    res.cookie('token', token).status(201).json({token , user});
   } catch (error) {
     if(error.code === 11000) {
       return res.status(400).json({"msg": "Email already exists"});
@@ -19,6 +19,8 @@ const registerUserHandler = async({fullName , email , password} , req, res)=>{
   }
 }
 
+
+/*@Post /user/login handler */
 const loginUserHandler = async({email  , password} , req, res) =>{
     const user = await userModel.findOne({email}).select('+password');
 
@@ -32,18 +34,20 @@ const loginUserHandler = async({email  , password} , req, res) =>{
         return res.status(401).json({"msg":"Invalid Email or Password"})
 
     }
-
     const token = await user.generateAuthToken();
-
-    res.status(200).json({token , user});
+    res.cookie('token' , token).status(200).json({token , user});
 
 }
 
 
-
+/* @GET /user/profile handler */
+const getUserProfile = async(req , res )=>{
+    return res.status(200).json({msg:"Success" , user:req.user});
+}
 
 
 module.exports = {
     registerUserHandler,
-    loginUserHandler
+    loginUserHandler,
+    getUserProfile
 }

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {userRegistrationSchema  , userLoginSchema} = require( '../validation/user.validation');
-const {registerUserHandler , loginUserHandler} = require('../controllers/user.controller');
-
+const {registerUserHandler , loginUserHandler , getUserProfile} = require('../controllers/user.controller');
+const authUser = require('../middlewares/auth.middleware')
 router.post("/register", (req, res) => {
 
     // Validate Using UserSchema Here !!!!!
@@ -37,4 +37,6 @@ router.post("/login" , (req, res)=>{
 
 })
 
+
+router.get("/profile" ,authUser ,  getUserProfile)
 module.exports = router;

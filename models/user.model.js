@@ -25,8 +25,10 @@ const userSchema = new mongoose.Schema({
 })
 
 // Methods for instances (jaise classes mein hota waise..)
-userSchema.methods.generateAuthToken = ()=>{
-    const token = jwt.sign({_id:this._id} , process.env.JWT_SECRET);
+userSchema.methods.generateAuthToken = function(){
+    console.log(this._id);
+    
+    const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET);
     return token;
 }
 
