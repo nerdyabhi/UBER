@@ -4,7 +4,7 @@ const userServices = require('../services/user.service');
 
 
 /* @POST /user/register handler. */
-const registerUser = async({fullName , email , password} , req, res)=>{
+const registerUserHandler = async({fullName , email , password} , req, res)=>{
   try {
     const hashedPassword = await userModel.hashPassword(password);
     const user = await userServices.createUser({fullName , email , password:hashedPassword});
@@ -19,9 +19,31 @@ const registerUser = async({fullName , email , password} , req, res)=>{
   }
 }
 
+const loginUserHandler = async({email  , password} , req, res) =>{
+    const user = await userModel.findOne({email}).select('+password');
+
+    if(!user){
+        return res.status(401).json({"msg":"Invalid Email or Password"})
+    }
+
+    const isMatch = await user.comparePassword(password);
+    
+    if(!isMatch ){
+        return res.status(401).json({"msg":"Invalid Email or Password"})
+
+    }
+
+    const token = await user.generateAuthToken();
+
+    res.status(200).json({token , user});
+
+}
+
+
 
 
 
 module.exports = {
-    registerUser,
+    registerUserHandler,
+    loginUserHandler
 }

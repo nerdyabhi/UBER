@@ -30,10 +30,22 @@ Handles the user registration process.
 - 400: Email already exists
 - 403: Other registration errors
 
-## Validation
-
 ### User Schema
 Zod validation schema for user registration with the following checks:
 - Full name validation
 - Email format validation
 - Password length requirements
+
+
+
+# POST /login
+
+Authenticates a user and generates an authentication token.
+
+## Request Body
+- `email` (string): User's email address
+- `password` (string): User's password
+
+## Success Response
+- Status Code: 200
+- Content:
