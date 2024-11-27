@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const {captainRegistrationSchema , captainLoginSchema} = require('../validation/captain.validation')
-const {registerCaptain , loginCaptainHandler} = require('../controllers/captain.controllers');
+const {registerCaptain , loginCaptainHandler , getProfileHandler , logoutCaptainHandler} = require('../controllers/captain.controllers');
+const {authCaptain} = require('../middlewares/auth.middleware');
+
 
 router.post('/register' , async(req , res)=>{
     const result = captainRegistrationSchema.safeParse(req.body);
@@ -22,8 +24,11 @@ router.post('/login' , async(req , res)=>{
     const data = result.data;
 
     /*@ACTUAL HANDLER */
-    loginCaptainHandler(data , res);
+    loginCaptainHandler(data , req, res);
 })
 
+router.get('/profile' , authCaptain , getProfileHandler);
+
+router.get('/logout' ,authCaptain , logoutCaptainHandler );
 
 module.exports = router;
