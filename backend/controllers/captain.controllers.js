@@ -13,7 +13,10 @@ const registerCaptain = async(data , res)=>{
         const token = captain.generateAuthToken();
         res.cookie('token', token).status(200).json({ msg: "Successfully Registered the user", token, captain });
     } catch (error) {
-        res.status(500).json({ msg: "Error registering captain", error: error.message });
+        if(error.code === 11000) {
+            return res.status(500).json({"msg": "Email already exists"});
+          }
+        res.status(500).json({ msg: error.message, error: error.message });
     }
 }
 

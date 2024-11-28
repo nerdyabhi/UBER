@@ -9,7 +9,7 @@ router.post('/register' , async(req , res)=>{
     const result = captainRegistrationSchema.safeParse(req.body);
 
     if(!result.success){
-        return res.status(400).json({msg:"Error , Please Provide Valid Credentials" , error:result.error.errors})
+        return res.status(400).json({msg: result.error.issues, error:"Please ENter Valid data" })
     }
 
     const data = result.data;

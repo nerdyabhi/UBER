@@ -5,13 +5,12 @@ import { API_URL } from "../utils/constants";
 import { useRecoilState } from "recoil";
 import { userContextAtom } from "../store/atom/UserContext";
 
-
-
-const UserLogin = () => {
+const UserLogin = ({message}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error , setError] = useState(null);
     const [user , setUser] = useRecoilState(userContextAtom);
+    if(message) setError(message);
     const Navigate = useNavigate();
     const submitHandler = async(e) => {
         e.preventDefault();

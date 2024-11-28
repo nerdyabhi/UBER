@@ -1,27 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import { userContextAtom } from "../store/atom/UserContext";
+import { captainContextAtom } from '../store/atom/CaptainContext'
 import { useRecoilState } from "recoil";
 import { useEffect } from "react";
 import axios from "axios";
 import { API_URL } from "../utils/constants";
 
-const HomePageGuard = ({children}) => {
+const CaptainHomeGuard = ({children}) => {
     const Navigate = useNavigate();
     const token = localStorage.getItem('token');
-    const [user, setUser] = useRecoilState(userContextAtom);
+    const [captain, setCaptain] = useRecoilState(captainContextAtom);
 
     useEffect(() => {
         if(!token) {
             Navigate('/login');
             return;
         }
-        axios.get(API_URL + '/user/profile', {
+        axios.get(API_URL + '/captain/profile', {
             headers: {
                 authorization: `Bearer ${token}`
             }
         }).then(response => {
             if(response.status === 200) {
-                setUser(response.data.user);
+                setCaptain(response.data.captain);
             } else {
                 Navigate('/login');
             }
@@ -30,7 +30,7 @@ const HomePageGuard = ({children}) => {
         });
     }, [token]);
 
-    if(!user) {
+    if(!captain) {
         return <h1>No context is there!</h1>;
     }
     return (
@@ -38,8 +38,6 @@ const HomePageGuard = ({children}) => {
             {children}
         </>
     )
-
-    
 }
 
-export default HomePageGuard;
+export default CaptainHomeGuard;
