@@ -16,7 +16,7 @@ connectToDB();
 
 // Basic Middlewares
 app.use(cors({
-    origin: '*', // Frontend domain
+    origin: 'http://localhost:5174/', // Frontend domain
     credentials: true // Allow cookies to be sent/received
 }));
 
