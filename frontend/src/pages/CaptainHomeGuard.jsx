@@ -15,6 +15,7 @@ const CaptainHomeGuard = ({children}) => {
             Navigate('/login');
             return;
         }
+
         axios.get(API_URL + '/captain/profile', {
             headers: {
                 authorization: `Bearer ${token}`
@@ -31,7 +32,7 @@ const CaptainHomeGuard = ({children}) => {
     }, [token]);
 
     if(!captain) {
-        return <h1>No context is there!</h1>;
+        Navigate('/login')
     }
     return (
         <>
