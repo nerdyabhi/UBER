@@ -1,6 +1,9 @@
-const RideComponent = ({img , setVehiclePanelOpen })=>{
+const RideComponent = ({img , setVehiclePanelOpen , setConfirmedVehiclePanel})=>{
     return (
-      <div onClick={()=>setVehiclePanelOpen(false)} className="flex items-center justify-center border-2 gap-4  md:gap-6 px-5 py-2 rounded-lg active:border-black transition-all duration-200 cursor-pointer md:w-[40%] ">
+      <div onClick={()=>{
+            setVehiclePanelOpen(false)
+            setConfirmedVehiclePanel(true);
+        }} className="flex items-center justify-center border-2 gap-4  md:gap-6 px-5 py-2 rounded-lg active:border-black transition-all duration-200 cursor-pointer md:w-[40%] ">
         <div className="car-img">
             <img className="w-20" src={img} alt="CarLogo" />
         </div>

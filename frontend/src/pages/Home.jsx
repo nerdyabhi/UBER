@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LocationSearchPanel from "../components/LocationSearchPanel";
 import RideComponent from "../components/RideComponent";
+import ConfirmedVehicle from "../components/confirmedVehicle";
+import WaitingForDriver from "../components/WaitingForDriver";
 
 
 
@@ -17,6 +19,8 @@ const Home = ()=>{
     const [destination , setDestination ] = useState("");
     const [panelOpen , setPanelOpen] = useState(false);
     const [vehiclePanelOpen , setVehiclePanelOpen] = useState(false);
+    const [confirmedVehiclePanel , setConfirmedVehiclePanel] = useState(false);
+    const [WaitingForDriverPanel , setWaitingForDriverPanel] = useState(false);
     if(!user) return <h1> Please Login to continue</h1>
 
     const submitHandler = (e)=>{
@@ -68,11 +72,20 @@ const Home = ()=>{
        {vehiclePanelOpen && <div className="absolute px-4 py-2 w-[100vw] h-[50%] bg-gray-50 bottom-0 z-10">
             < h1 className="font-bold py-2 text-2xl">Choose a Vehicle</h1>
             <div className="flex  flex-col gap-4 justify-center items-center ">
-                    <RideComponent setVehiclePanelOpen = {setVehiclePanelOpen} img={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_537/v1568134115/assets/6d/354919-18b0-45d0-a151-501ab4c4b114/original/XL.png"}/>
-                    <RideComponent setVehiclePanelOpen = {setVehiclePanelOpen} img= {"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1649231091/assets/2c/7fa194-c954-49b2-9c6d-a3b8601370f5/original/Uber_Moto_Orange_312x208_pixels_Mobile.png"}/>
-                    <RideComponent setVehiclePanelOpen = {setVehiclePanelOpen} img ={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1648431773/assets/1d/db8c56-0204-4ce4-81ce-56a11a07fe98/original/Uber_Auto_558x372_pixels_Desktop.png"} />
+                    <RideComponent setVehiclePanelOpen = {setVehiclePanelOpen} setConfirmedVehiclePanel = {setConfirmedVehiclePanel} img={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_537/v1568134115/assets/6d/354919-18b0-45d0-a151-501ab4c4b114/original/XL.png"}/>
+                    <RideComponent setVehiclePanelOpen = {setVehiclePanelOpen} setConfirmedVehiclePanel = {setConfirmedVehiclePanel} img= {"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1649231091/assets/2c/7fa194-c954-49b2-9c6d-a3b8601370f5/original/Uber_Moto_Orange_312x208_pixels_Mobile.png"}/>
+                    <RideComponent setVehiclePanelOpen = {setVehiclePanelOpen} setConfirmedVehiclePanel = {setConfirmedVehiclePanel} img ={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1648431773/assets/1d/db8c56-0204-4ce4-81ce-56a11a07fe98/original/Uber_Auto_558x372_pixels_Desktop.png"} />
             </div>
         </div>}
+
+       {confirmedVehiclePanel && <div className="absolute p-6 shadow-lg flex items-center justify-center w-[100vw] h-[60%] bg-gray-50 bottom-0 z-10">
+            <ConfirmedVehicle img={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_537/v1568134115/assets/6d/354919-18b0-45d0-a151-501ab4c4b114/original/XL.png"} price={693}  vehicleType="motorcycle" setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} />
+        </div>}
+
+       {WaitingForDriverPanel &&  <div className="absolute p-6 shadow-lg flex items-center justify-center w-[100vw] h-[60%] bg-gray-50 bottom-0 z-10">
+            <WaitingForDriver setWaitingForDriverPanel= {setWaitingForDriverPanel}/>
+        </div>}
+        
       </div>
     )
 }
