@@ -8,7 +8,7 @@ const RideComponent = ({img , setVehiclePanelOpen , setConfirmedVehiclePanel})=>
             <img className="w-20" src={img} alt="CarLogo" />
         </div>
         <div className="center-details flex flex-col ">
-            <h1 className="font-semibold text-xl">UberGo <span className="text-lg ">🧑‍🦲4</span></h1> 
+            <h1 className="font-semibold text-xl">Uber Go <span className="text-sm "><i className="fas fa-user"></i>4</span></h1> 
             <p className="font-thin">Affordable compact rides</p>
         </div>
         <div className="price">
