@@ -9,7 +9,8 @@ const cookieParser = require('cookie-parser');
 /** Routes */
 const userRouter = require('./routes/user.routes');
 const captainRouter = require('./routes/captain.routes')
-
+const mapRouter = require('./routes/maps.routes');
+const rideRouter = require('./routes/rides.routes');
 /** Database connection. */
 connectToDB(); 
 
@@ -25,11 +26,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser());
 
 // Route Configurations
-app.get("/" , (req, res)=>{
-    res.send("hello world");
-})
 
 app.use('/user', userRouter);
 app.use('/captain' , captainRouter );
+app.use('/maps',mapRouter )
+app.use('/rides',rideRouter );
 
 module.exports = app;
