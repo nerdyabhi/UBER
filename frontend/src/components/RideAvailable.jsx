@@ -39,6 +39,14 @@ export default function RideAvailable({data}) {
                         <div className="w-2 h-2 rounded-full bg-red-500"/>
                         <span>To: {ride.destination}</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500"/>
+                        <span>Fare : ₹{Math.round(ride.fare)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-purple-500"/>
+                        <span>Distance: {Math.round(ride.distance/1000)} Km.</span>
+                    </div>
                 </div>
             </div>
 
