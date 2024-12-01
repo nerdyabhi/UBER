@@ -3,12 +3,14 @@ import { userContextAtom } from "../store/atom/UserContext";
 import axios from "axios";
 import { API_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import LocationSearchPanel from "../components/LocationSearchPanel";
 import RideComponent from "../components/RideComponent";
 import ConfirmedVehicle from "../components/confirmedVehicle";
 import WaitingForDriver from "../components/WaitingForDriver";
 import useAutoComplete from "../hooks/useAutoComplete";
+import { SocketContext } from "../store/atom/SocketContext";
+
 const Home = ()=>{
     const user = useRecoilValue(userContextAtom);
     const [pickup , setPickup ] = useState("");
@@ -18,23 +20,49 @@ const Home = ()=>{
     const [vehiclePanelOpen , setVehiclePanelOpen] = useState(false);
     const [confirmedVehiclePanel , setConfirmedVehiclePanel] = useState(false);
     const [WaitingForDriverPanel , setWaitingForDriverPanel] = useState(false);
-   const token = localStorage.getItem('token');
-
+    const [fares , setFares] = useState(null);
+    const [vehicleType , setVehicleType] = useState(null);
+    const [activeField , setActiveField] = useState(null);
+    const token = localStorage.getItem('token');
+    const socket = useContext(SocketContext);
     const submitHandler = (e)=>{
         e.preventDefault();
         setPanelOpen(false);
     }
     
-    const findTripHandler = (e)=>{
+    const findTripHandler = async(e)=>{
         e.preventDefault();
         setVehiclePanelOpen(true)
         setPanelOpen(false);
-        setPickup("");
-        setDestination("");
+        /*Get Fare */
+
+        try {
+            const response = await axios.post(API_URL+'/rides/getFare' , {pickup , destination} , {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            })
+            console.log(response.data);
+            
+            setFares(response.data);
+        } catch (error) {
+            console.log("failed to get fare" , error);
+        }
+
+        /*Clear Menu*/
+        // setPickup("");
+        // setDestination("");
     }
 
-    // const locations = useAutoComplete(panelOpen ? (document.activeElement.placeholder.includes('pickup') ? pickup : destination) : pickup, token);
-    const locations = [];
+    useEffect(() => {
+        if (user) {
+            socket.emit('join', { userType: "user", userId: user._id });
+        }
+    }, [user]);
+
+    /*@ Toggle between locations to save api referes */
+    const locations = useAutoComplete(panelOpen ? (document.activeElement?.placeholder?.includes('pickup') ? pickup : destination) : pickup, token);
+    // const locations = [];
 
     if(!user) return <h1> Please Login to continue</h1>
 
@@ -61,7 +89,11 @@ const Home = ()=>{
                             className="px-4 py-3 rounded-xl bg-gray-100 border-none focus:outline-none focus:ring-2 focus:ring-black/20 transition-all"
                             value={pickup}
                             onChange={(e)=>setPickup(e.target.value)}
-                            onClick={()=>setPanelOpen(true)}
+                            onClick={()=>{
+                                setPanelOpen(true);
+                                console.log("pickup");
+                                setActiveField('pickup');
+                            }}
                         />
                         <input 
                             type="text" 
@@ -69,7 +101,10 @@ const Home = ()=>{
                             className="px-4 py-3 rounded-xl bg-gray-100 border-none focus:outline-none focus:ring-2 focus:ring-black/20 transition-all"
                             value={destination}
                             onChange={(e)=>setDestination(e.target.value)}
-                            onClick={()=>setPanelOpen(true)}
+                            onClick={()=>{
+                                setActiveField('destination');
+                                setPanelOpen(true);
+                            }}
                         />
 
                         {panelOpen && 
@@ -80,22 +115,20 @@ const Home = ()=>{
                     </form>
 
                     <div className="flex max-w-md items-center justify-center mt-4" >
-                        {panelOpen && locations && <LocationSearchPanel locations={locations} />}
+                        {panelOpen && locations && <LocationSearchPanel locations={locations}  setPickup={setPickup} setDestination={setDestination} activeField={activeField} />}
                     </div>
                 </div>
        </div>
 
-       {vehiclePanelOpen && <div className="absolute px-6 py-6 w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl shadow-2xl">
+       {vehiclePanelOpen && fares && <div className="absolute px-6 py-6 w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl shadow-2xl">
             <h1 className="font-bold py-2 text-2xl text-gray-900">Choose a ride</h1>
             <div className="flex flex-col gap-4 justify-center items-center overflow-y-auto h-[calc(100%-4rem)]">
-                    <RideComponent setVehiclePanelOpen={setVehiclePanelOpen} setConfirmedVehiclePanel={setConfirmedVehiclePanel} img={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_537/v1568134115/assets/6d/354919-18b0-45d0-a151-501ab4c4b114/original/XL.png"}/>
-                    <RideComponent setVehiclePanelOpen={setVehiclePanelOpen} setConfirmedVehiclePanel={setConfirmedVehiclePanel} img={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1649231091/assets/2c/7fa194-c954-49b2-9c6d-a3b8601370f5/original/Uber_Moto_Orange_312x208_pixels_Mobile.png"}/>
-                    <RideComponent setVehiclePanelOpen={setVehiclePanelOpen} setConfirmedVehiclePanel={setConfirmedVehiclePanel} img={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1648431773/assets/1d/db8c56-0204-4ce4-81ce-56a11a07fe98/original/Uber_Auto_558x372_pixels_Desktop.png"}/>
+                    <RideComponent setVehiclePanelOpen={setVehiclePanelOpen} setConfirmedVehiclePanel={setConfirmedVehiclePanel} fares={fares} setVehicleType={setVehicleType} />
             </div>
         </div>}
 
-       {confirmedVehiclePanel && <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
-            <ConfirmedVehicle img={"https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_537/v1568134115/assets/6d/354919-18b0-45d0-a151-501ab4c4b114/original/XL.png"} price={693} vehicleType="motorcycle" setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} />
+       {confirmedVehiclePanel && fares&& <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
+            <ConfirmedVehicle fares={fares} pickup={pickup} destination={destination} vehicleType={vehicleType} setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} />
         </div>}
 
        {WaitingForDriverPanel && <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">

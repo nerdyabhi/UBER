@@ -4,8 +4,8 @@ const crypto = require('crypto');
 
 function calculateFare(distanceInKm, vehicleType = 'Car') {
     const baseFares = {
-        Motorcycle: 30,
-        Auto: 40,
+        Motorcycle: 20,
+        Auto: 35,
         Car: 50
     };
     const farePerKm = 10; // fare per kilometer in currency
@@ -53,4 +53,4 @@ const createRide = async({user , pickup , destination , vehicleType})=>{
        return ride;
 }
 
-module.exports = createRide;
+module.exports = {createRide , getFare};

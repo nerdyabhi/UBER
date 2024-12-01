@@ -21,4 +21,10 @@ const captainLoginSchema = z.object({
     password: z.string().min(6, 'Password should be at least 6 characters long')
 })
 
-module.exports = {captainRegistrationSchema ,captainLoginSchema };
+const updateLocationSchema = z.object({
+    ltd: z.number().min(-90).max(90), // Latitude range
+    lng: z.number().min(-180).max(180), // Longitude range
+  });
+  
+
+module.exports = {captainRegistrationSchema ,captainLoginSchema , updateLocationSchema };

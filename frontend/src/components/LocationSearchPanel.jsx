@@ -1,8 +1,16 @@
 
 import React from "react"
 
-const LocationSearchPanel = ({locations}) => {
+const LocationSearchPanel = ({ setPickup , setDestination , locations , activeField}) => {
     if(!locations) return <></>
+    const onclickHandler = (location)=>{
+        if(activeField === 'pickup'){
+            setPickup(location.description);
+        }
+        else if(activeField === 'destination'){
+            setDestination(location.description)
+        }
+    }
     return (
         <div className="px-4">
             {
@@ -10,7 +18,7 @@ const LocationSearchPanel = ({locations}) => {
                     return (
                         <div 
                             key={location.place_id} 
-                          
+                            onClick={()=>onclickHandler(location)}
                             className="flex border-2 py-3 px-4 active:border-black items-center gap-4 w-full mb-2 hover:bg-gray-50 rounded-md transition-colors cursor-pointer"
                         >
                             <div className="text-2xl">

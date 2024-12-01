@@ -3,64 +3,92 @@ import { captainContextAtom } from "../store/atom/CaptainContext";
 import axios from "axios";
 import { API_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-const IMG_URL = "https://images.squarespace-cdn.com/content/v1/54ff63f0e4b0bafce6932642/1613584766993-KD4G7Q9XDVVHE7EFE1JF/Two+Maps+-+Grayscale.png?format=1500w";
+import { useContext, useEffect, useState } from "react";
+import RideAvailable from "../components/RideAvailable";
+import CaptainDetails from "../components/CaptainDetails";
+import { SocketContext } from "../store/atom/SocketContext";
+
 const CaptainHome = () => {
-    const Navigate = useNavigate();
+  const Navigate = useNavigate();
+  const captain = useRecoilValue(captainContextAtom);
+  // const [availableRide, setAvailableRide] = useState(false);
+  const [data , setData] = useState(null);
 
-    const captain = useRecoilValue(captainContextAtom);
-    const token = localStorage.getItem('token');
-    const logoutHandler = async () => {
-        const response = await axios.get(API_URL + '/captain/logout', {
-            headers: {
-                authorization: `Bearer ${token}`
-            }
-        })
+  const socket = useContext(SocketContext);
 
-        Navigate('/login')
+  if (!captain) {
+    return <h1>Please login to continue</h1>;
+  }
+
+  const token = localStorage.getItem('token');
+  const logoutHandler = async () => {
+    await axios.get(API_URL + '/captain/logout', {
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    });
+
+    console.log("Logged out");
+    
+
+
+  };
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      let lastPosition = null;
+      let lastUpdateTime = Date.now();
+
+      navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude: ltd, longitude: lng } = position.coords;
+          const currentTime = Date.now();
+
+          if (
+            !lastPosition ||
+            (lastPosition.latitude !== ltd || lastPosition.longitude !== lng) ||
+            (currentTime - lastUpdateTime >= 2 * 60 * 1000)
+          ) {
+            socket?.emit('update-location', { userId: captain._id, location: { ltd, lng } });
+            lastPosition = { latitude: ltd, longitude: lng };
+            lastUpdateTime = currentTime;
+          }
+        },
+        (error) => {
+          console.error("Error watching location: ", error);
+        }
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
     }
 
-    console.log(captain);
-    
+    socket?.emit('join', { userType: "captain", userId: captain._id });
 
-    if (!captain) return <h1> Please Login to continue</h1>
+  
+  }, [token, captain, socket]);
 
-    
-return (
-        <div className="flex h-[100vh] w-[100vw] bg-gray-400 ">
-                <img className="w-full h-1/2" src={IMG_URL} alt="" />
-                <div>
+  useEffect(() => {
+    socket?.on('connect', () => {
+      console.log("Connected to server");
+    });
 
-                </div>
-        <div className="absolute h-1/2 bottom-0 w-full bg-white p-6 rounded-md">
-            <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-gray-200 rounded-full"/>
-                <div>
-                    <h2 className="text-2xl font-bold">{captain.fullName.firstName } {captain.fullName.lastName}</h2>
-                    <p className="text-gray-600">{captain.vehicleType} Driver</p>
-                </div>
-            </div>
-            
-            <div className="space-y-4">
-                <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">Vehicle Number</span>
-                    <span className="font-semibold">{captain.vehicle.plate}</span>
-                </div>
-                <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">Vehicle Type </span>
-                    <span className="font-semibold">{captain.vehicle.vehicleType}</span>
-                </div>
-            </div>
+    socket?.on('disconnect', () => {
+      console.log("Disconnected from server");
+    });
 
-            <button 
-                onClick={logoutHandler}
-                className="w-full mt-6 bg-black text-white py-4 rounded-lg font-semibold"
-            >
-                Logout
-            </button>
-        </div>
-        </div>   
-    )   
-}
+  socket?.on('ride-requested', (data) => {
+    console.log("Ride requested: ", data);
+    setData(data);
+  })
+
+  }, [socket]);
+
+  return (
+    <>
+      <CaptainDetails captain={captain} logoutHandler={logoutHandler} />
+      {data && <RideAvailable data={data} />}
+    </>
+  );
+};
 
 export default CaptainHome;

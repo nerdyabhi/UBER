@@ -27,6 +27,9 @@ const CaptainLogin = () => {
             
         } catch (error) {
             console.log("eroor" , error);
+            const error_message = error.response.data.msg || 
+            error.response.data.errors[0]?.message;
+            setError(error_message);
             
         }
 

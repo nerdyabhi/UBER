@@ -1,3 +1,4 @@
+
 export default function WaitingForDriver({ img="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_537/v1568134115/assets/6d/354919-18b0-45d0-a151-501ab4c4b114/original/XL.png", price="69$", vehicleType="moto", driverName = "John Doe" , setWaitingForDriverPanel  }) {
     return (
         <div className="md:w-[40%] w-full">
