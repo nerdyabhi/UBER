@@ -8,7 +8,7 @@ const SocketProvider = ({ children }) => {
    const [socket, setSocket] = useState(null);
 
    useEffect(() => {
-      const newSocket = io(API_URL); // Create a new socket instance
+      const newSocket = io(process.env.REACT_APP_SOCKET_URL); // Use environment variable for Socket URL
       setSocket(newSocket);
 
       
