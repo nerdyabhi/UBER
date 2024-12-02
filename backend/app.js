@@ -25,7 +25,7 @@ app.use(cookieParser());
 // Route Configurations
 
 app.get("/" , (req, res)=>{
-    res.send("Hello world");
+res.send("Hello world");
 })
 
 app.use('/user', userRouter);
