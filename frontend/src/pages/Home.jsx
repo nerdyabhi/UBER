@@ -10,6 +10,8 @@ import ConfirmedVehicle from "../components/confirmedVehicle";
 import WaitingForDriver from "../components/WaitingForDriver";
 import useAutoComplete from "../hooks/useAutoComplete";
 import { SocketContext } from "../store/atom/SocketContext";
+import OngoingRide from "../components/OngoingRide";
+import LiveTracking from "../components/LiveTracking";
 
 const Home = ()=>{
     const user = useRecoilValue(userContextAtom);
@@ -22,6 +24,8 @@ const Home = ()=>{
     const [WaitingForDriverPanel , setWaitingForDriverPanel] = useState(false);
     const [fares , setFares] = useState(null);
     const [vehicleType , setVehicleType] = useState(null);
+    const [rideData , setRideData] = useState(null);
+    const [confirmedRideData , setConfirmedRideData] = useState(null);
     const [activeField , setActiveField] = useState(null);
     const token = localStorage.getItem('token');
     const socket = useContext(SocketContext);
@@ -60,6 +64,25 @@ const Home = ()=>{
         }
     }, [user]);
 
+    useEffect(()=>{
+        const handleRideAccepted = (data) => {
+            console.log("Ride got accepted  HUrray");
+            console.log(data);
+            setConfirmedRideData(data);
+            setConfirmedVehiclePanel(false);
+
+        };
+
+        const handleError = (data) => {
+            console.log("Got an error ", data);
+        };
+
+        socket.on('ride-accepted', handleRideAccepted);
+        socket.on('error', handleError); 
+
+      
+    }, [socket])
+
     /*@ Toggle between locations to save api referes */
     const locations = useAutoComplete(panelOpen ? (document.activeElement?.placeholder?.includes('pickup') ? pickup : destination) : pickup, token);
     // const locations = [];
@@ -67,8 +90,10 @@ const Home = ()=>{
     if(!user) return <h1> Please Login to continue</h1>
 
     return(
-      <div className="flex flex-col max-w-[100vw] h-[100vh] w-[100vw] object-cover bg-[url('https://images.squarespace-cdn.com/content/v1/54ff63f0e4b0bafce6932642/1613584766993-KD4G7Q9XDVVHE7EFE1JF/Two+Maps+-+Grayscale.png?format=1500w')] transition-all duration-200">
-
+      <div className="flex flex-col max-w-[100vw] h-[100vh] w-[100vw]  transition-all duration-200">
+        <div className="flex w-[100vw] h-1/2  absolute top-0 z-0">
+            < LiveTracking/>
+        </div>
         <div className="logo absolute top-4 left-4">
             <img src="/uber-logo.png" alt="Uber" className="h-8" />
         </div>
@@ -128,12 +153,14 @@ const Home = ()=>{
         </div>}
 
        {confirmedVehiclePanel && fares&& <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
-            <ConfirmedVehicle fares={fares} pickup={pickup} destination={destination} vehicleType={vehicleType} setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} />
+            <ConfirmedVehicle rideData={rideData} setRideData={setRideData}  fares={fares} pickup={pickup} destination={destination} vehicleType={vehicleType} setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} />
         </div>}
 
        {WaitingForDriverPanel && <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
             <WaitingForDriver setWaitingForDriverPanel={setWaitingForDriverPanel}/>
         </div>}
+
+        {confirmedRideData && <OngoingRide rideData={rideData} confirmedRideData={confirmedRideData}/>}
         
       </div>
     )

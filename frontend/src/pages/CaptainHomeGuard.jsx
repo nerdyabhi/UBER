@@ -22,6 +22,7 @@ const CaptainHomeGuard = ({children}) => {
             }
         }).then(response => {
             if(response.status === 200) {
+                console.log("succesfully , Saved the captain");
                 setCaptain(response.data.captain);
             } else {
                 Navigate('/login');

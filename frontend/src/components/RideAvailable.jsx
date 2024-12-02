@@ -1,11 +1,9 @@
-export default function RideAvailable({data}) {
+export default function RideAvailable({data ,setData,  handleConfirmRide}) {
     const {user ,  ride} = data;
-    const handleConfirm = () => {
-        // Add ride confirmation logic here
-    };
-
+   
     const handleReject = () => {
         // Add ride rejection logic here
+        setData(null);
     };
 
     return (
@@ -54,7 +52,7 @@ export default function RideAvailable({data}) {
                 <button onClick={handleReject} className="flex-1 border border-black py-4 rounded-lg font-semibold">
                     Decline
                 </button>
-                <button onClick={handleConfirm} className="flex-1 bg-black text-white py-4 rounded-lg font-semibold">
+                <button onClick={handleConfirmRide} className="flex-1 bg-black text-white py-4 rounded-lg font-semibold">
                     Accept Ride
                 </button>
             </div>

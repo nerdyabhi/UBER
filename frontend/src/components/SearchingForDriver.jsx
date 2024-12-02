@@ -1,4 +1,4 @@
-export default function SearchingForDriver({ setSearchingForDriverPanel }) {
+export default function SearchingForDriver({ setIswaiting}) {
     return (
         <div className="md:w-[40%] w-full">
             <div className="mb-8 text-center">
@@ -31,7 +31,7 @@ export default function SearchingForDriver({ setSearchingForDriverPanel }) {
 
             {/* Cancel Button */}
             <button 
-                onClick={() => setSearchingForDriverPanel(false)}
+                onClick={() => setIswaiting(false)}
                 className="w-full border border-black py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
                 Cancel

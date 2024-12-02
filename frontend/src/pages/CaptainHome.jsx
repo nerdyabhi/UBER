@@ -7,67 +7,49 @@ import { useContext, useEffect, useState } from "react";
 import RideAvailable from "../components/RideAvailable";
 import CaptainDetails from "../components/CaptainDetails";
 import { SocketContext } from "../store/atom/SocketContext";
+import CompleteRidewithOtp from "../components/CompleteRideWithOtp";
 
 const CaptainHome = () => {
+  const token = localStorage.getItem('token');
   const Navigate = useNavigate();
   const captain = useRecoilValue(captainContextAtom);
-  // const [availableRide, setAvailableRide] = useState(false);
   const [data , setData] = useState(null);
-
+  const [completeRideData , setCompleteRideData] = useState(false);
+  const [fare , setFare] = useState(null);
   const socket = useContext(SocketContext);
 
-  if (!captain) {
-    return <h1>Please login to continue</h1>;
-  }
 
-  const token = localStorage.getItem('token');
-  const logoutHandler = async () => {
-    await axios.get(API_URL + '/captain/logout', {
-      headers: {
-        authorization: `Bearer ${token}`
-      }
-    });
-
-    console.log("Logged out");
-    
-
-
-  };
-
+  /*@ Use Effects  */
   useEffect(() => {
-    if (navigator.geolocation) {
-      let lastPosition = null;
-      let lastUpdateTime = Date.now();
+    if(captain){
+      
+      socket?.emit('join', {
+        userId: captain?._id,
+        userType: 'captain'
+      });
 
-      navigator.geolocation.watchPosition(
-        (position) => {
-          const { latitude: ltd, longitude: lng } = position.coords;
-          const currentTime = Date.now();
-
-          if (
-            !lastPosition ||
-            (lastPosition.latitude !== ltd || lastPosition.longitude !== lng) ||
-            (currentTime - lastUpdateTime >= 2 * 60 * 1000)
-          ) {
-            socket?.emit('update-location', { userId: captain._id, location: { ltd, lng } });
-            lastPosition = { latitude: ltd, longitude: lng };
-            lastUpdateTime = currentTime;
-          }
-        },
-        (error) => {
-          console.error("Error watching location: ", error);
-        }
-      );
-    } else {
-      console.log("Geolocation is not supported by this browser.");
     }
+    const updateLocation = () => {
+      if (navigator.geolocation && captain) {
+        navigator.geolocation.getCurrentPosition(position => {
+          socket?.emit('update-location-captain', {
+            userId: captain?._id,
+            location: {
+              ltd: position.coords.latitude,
+              lng: position.coords.longitude
+            }
+          });
+        });
+      }
+    };
 
-    socket?.emit('join', { userType: "captain", userId: captain._id });
+    const locationInterval = setInterval(updateLocation, 10000);
+    updateLocation();
 
-  
-  }, [token, captain, socket]);
+    return () => clearInterval(locationInterval);
+  }, [captain , socket ]);
 
-  useEffect(() => {
+
     socket?.on('connect', () => {
       console.log("Connected to server");
     });
@@ -76,17 +58,58 @@ const CaptainHome = () => {
       console.log("Disconnected from server");
     });
 
-  socket?.on('ride-requested', (data) => {
-    console.log("Ride requested: ", data);
-    setData(data);
-  })
+    socket?.on('ride-requested', (data) => {
+      console.log("Ride requested: ", data);
+      setData(data);
+      setFare(data.ride.fare);
+    });
 
-  }, [socket]);
+
+
+  /*@Handlers */
+  const logoutHandler = async () => {
+    await axios.get(API_URL + '/captain/logout', {
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    });
+
+    console.log("Logged out");
+    Navigate('/captain/login');
+
+
+  };
+
+  const handleConfirmRide = ()=>{
+    axios.post(`${API_URL}/rides/confirm`, {
+      rideId: data?.ride?._id,
+      captainId: captain?._id
+    }, {
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      console.log("Ride confirmed: ", response.data);
+      setCompleteRideData(response.data);
+      setData(null);
+    })
+    .catch(error => {
+      console.error("Error confirming ride: ", error);
+    });
+    // setCompleteRidePanel(true);
+    // setData(null);
+  }
+
+ 
+  
+
 
   return (
     <>
-      <CaptainDetails captain={captain} logoutHandler={logoutHandler} />
-      {data && <RideAvailable data={data} />}
+      {captain && <CaptainDetails captain={captain} logoutHandler={logoutHandler} />}
+      {data && <RideAvailable data={data}  setData={setData} handleConfirmRide = {handleConfirmRide} />}
+      {completeRideData && <CompleteRidewithOtp completeRideData = {completeRideData} fare =  {fare}/>}
     </>
   );
 };

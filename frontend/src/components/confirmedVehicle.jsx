@@ -3,7 +3,7 @@ import { API_URL, AUTO_IMG, CAR_IMG, MOTO_IMG } from "../utils/constants";
 import { useState } from "react";
 import SearchingForDriver from "./SearchingForDriver";
 const token = localStorage.getItem('token');
-export default function ConfirmedVehicle({pickup, destination,  fares, vehicleType, setConfirmedVehiclePanel, setWaitingForDriverPanel }) {
+export default function ConfirmedVehicle({ setRideData , pickup, destination,  fares, vehicleType, setConfirmedVehiclePanel, setWaitingForDriverPanel }) {
     const img = vehicleType === "Car" ? CAR_IMG : vehicleType === "Motorcycle" ? MOTO_IMG : AUTO_IMG;
     const price = fares?.fares?.fares[vehicleType];
     const distance = fares?.fares?.distanceInKm;
@@ -17,7 +17,7 @@ export default function ConfirmedVehicle({pickup, destination,  fares, vehicleTy
                     authorization:`Bearer ${token}`
                 }
             })
-            console.log(response);
+           setRideData(response.data);
             
         } catch (error) {
             console.log("Failed to create a ride" , error);
@@ -31,11 +31,9 @@ export default function ConfirmedVehicle({pickup, destination,  fares, vehicleTy
         // setIswaiting(false);
         // setConfirmedVehiclePanel(false);
         // setWaitingForDriverPanel(true);
-
-
     }
     if (!fares) return <></>;
-    if(isWaiting) return <SearchingForDriver/>
+    if(isWaiting) return <SearchingForDriver setIswaiting = {setIswaiting} />
     return (
         <div className="md:w-[40%] w-full">
             <div className="flex justify-between items-center mb-4">
