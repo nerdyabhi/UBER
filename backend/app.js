@@ -17,12 +17,7 @@ connectToDB();
 
 // Basic Middlewares
 app.use(cors({
-    origin: ['https://sastauber.vercel.app', 'https://uber-production.up.railway.app'], // Frontend and backend domains
-    credentials: true, // Allow cookies to be sent/received
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
-    exposedHeaders: ['*', 'Authorization'],
-    transports: ['websocket', 'polling']
+    origin:"*",
 }));
 
 app.use(express.json())
