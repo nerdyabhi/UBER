@@ -1,6 +1,7 @@
 const socketIo = require('socket.io');
 const userModel = require('./models/user.model');
 const captainModel = require('./models/captain.models');
+const rideModel = require('./models/ride.model');
 
 let io;
 
@@ -22,7 +23,7 @@ function initializeSocket(server) {
             if (userType === 'user') {
                 await userModel.findByIdAndUpdate(userId, { socketId: socket.id });
             } else if (userType === 'captain') {
-                await captainModel.findByIdAndUpdate(userId, { socketId: socket.id });
+                await captainModel.findByIdAndUpdate(userId, { socketId: socket.id , status: 'active' });
             }
 
             console.log("Succesfully updated socketId");
@@ -42,15 +43,19 @@ function initializeSocket(server) {
                     ltd: location.ltd,
                     lng: location.lng
                 }
+               
             });
 
             console.log("updated location :", data);
             
         })
 
+
+      
         
 
         socket.on('disconnect', () => {
+
             console.log(`Client disconnected: ${socket.id}`);
         });
     });

@@ -1,6 +1,8 @@
 const rideModel = require('../models/ride.model');
 const mapService = require('../services/maps.service');
 const crypto = require('crypto');
+const { sendMessageToSocketId } = require('../socket');
+
 
 function calculateFare(distanceInKm, vehicleType = 'Car') {
     const baseFares = {
@@ -9,7 +11,7 @@ function calculateFare(distanceInKm, vehicleType = 'Car') {
         Car: 50
     };
     const farePerKm = 10; // fare per kilometer in currency
-    return baseFares[vehicleType] + (farePerKm * distanceInKm);
+    return Math.round(baseFares[vehicleType] + (farePerKm * distanceInKm));
 }
 
 const getFare= async(pickup, destination) =>{
@@ -52,5 +54,6 @@ const createRide = async({user , pickup , destination , vehicleType})=>{
 
        return ride;
 }
+
 
 module.exports = {createRide , getFare};

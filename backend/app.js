@@ -17,7 +17,7 @@ connectToDB();
 
 // Basic Middlewares
 app.use(cors({
-    origin: 'http://localhost:5173', // Frontend domain
+    origin: 'https://uber-production.up.railway.app/', // Frontend domain
     credentials: true // Allow cookies to be sent/received
 }));
 
