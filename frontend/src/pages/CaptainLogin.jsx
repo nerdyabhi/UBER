@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API_URL } from "../utils/constants";
 import { useRecoilState } from "recoil";
 import { captainContextAtom } from "../store/atom/CaptainContext";
-const CaptainLogin = () => {
+const CaptainLogin = ({ setIsLoggedIn }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error , setError] = useState(null);
@@ -21,6 +21,7 @@ const CaptainLogin = () => {
             if(response.status == 200){
                 setCaptain(response.data.captain);
                 localStorage.setItem('token' , response.data.token);
+                setIsLoggedIn(true); // Set isLoggedIn to true on successful login
                 Navigate('/captain/home')
             }
             

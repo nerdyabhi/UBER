@@ -8,7 +8,7 @@ import { userContextAtom } from "../store/atom/UserContext";
 
 
 
-const UserSignup = () => {
+const UserSignup = ({ setIsLoggedIn }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -48,6 +48,7 @@ const UserSignup = () => {
                 setUser(response.data.user);
                 Navigate('/home');
                 localStorage.setItem("token", response?.data?.token);
+                setIsLoggedIn(true); // Set isLoggedIn to true on successful signup
             } else {
             console.log("Error : " , response)
             }

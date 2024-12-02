@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import axios from "axios";
 import { API_URL } from "../utils/constants";
 
-const CaptainSignup = () => {
+const CaptainSignup = ({ setIsLoggedIn }) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -55,7 +55,8 @@ const CaptainSignup = () => {
 
                 localStorage.setItem('token' , response.data.token);
                 setCaptain(response.data.captain);
-                Navigate('/captain/home')
+                Navigate('/captain/home');
+                setIsLoggedIn(true); // Set isLoggedIn to true on successful signup
             }
         } catch (error) {
             console.log(error);
