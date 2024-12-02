@@ -17,8 +17,11 @@ connectToDB();
 
 // Basic Middlewares
 app.use(cors({
-    origin: 'https://sastauber.vercel.app/', // Frontend domain
-    credentials: true // Allow cookies to be sent/received
+    origin: 'https://sastauber.vercel.app', // Frontend domain
+    credentials: true, // Allow cookies to be sent/received
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
+    exposedHeaders: ['*', 'Authorization']
 }));
 
 app.use(express.json())
