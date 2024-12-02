@@ -4,27 +4,25 @@ import { API_URL } from '../../utils/constants';
 
 export const SocketContext = createContext();
 
-const SocketProvider = ({ children, isLoggedIn }) => {
+const SocketProvider = ({ children }) => {
    const [socket, setSocket] = useState(null);
 
    useEffect(() => {
-      if (isLoggedIn) {
-         const newSocket = io(process.env.REACT_APP_SOCKET_URL); // Use environment variable for Socket URL
-         setSocket(newSocket);
+      const newSocket = io(API_URL); // Use environment variable for Socket URL
+      setSocket(newSocket);
 
-         newSocket.on('connect', () => {
-            console.log('Socket connected');
-         });
+      newSocket.on('connect', () => {
+         console.log('Socket connected');
+      });
 
-         newSocket.on('disconnect', () => {
-            console.log('Socket disconnected');
-         });
+      newSocket.on('disconnect', () => {
+         console.log('Socket disconnected');
+      });
 
-         return () => {
-            newSocket.close();
-         };
-      }
-   }, [isLoggedIn]);
+      return () => {
+         newSocket.close();
+      };
+   }, []);
 
    return (
       <SocketContext.Provider value={socket}>

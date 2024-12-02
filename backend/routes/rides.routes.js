@@ -98,6 +98,9 @@ router.post('/confirm', authCaptain, async (req, res) => {
         return res.status(400).json("Please send valid RideId and CaptainID");
     }
 
+    console.log("You called to create a ride.");
+    
+
     const { rideId, captainId } = validation.data;
 
     try {

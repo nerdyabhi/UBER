@@ -6,9 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userContextAtom } from "../store/atom/UserContext";
 
-
-
-const UserSignup = ({ setIsLoggedIn }) => {
+const UserSignup = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -29,7 +27,6 @@ const UserSignup = ({ setIsLoggedIn }) => {
     const submitHandler = async(e) => {
         e.preventDefault();
 
-
         const data = {
             fullName:{
                 firstName,
@@ -48,7 +45,6 @@ const UserSignup = ({ setIsLoggedIn }) => {
                 setUser(response.data.user);
                 Navigate('/home');
                 localStorage.setItem("token", response?.data?.token);
-                setIsLoggedIn(true); // Set isLoggedIn to true on successful signup
             } else {
             console.log("Error : " , response)
             }
@@ -75,7 +71,6 @@ const UserSignup = ({ setIsLoggedIn }) => {
                         </h2>
                     </div>
 
-
                     {/* Error Message Page */}
                     {error && (
                         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -84,7 +79,7 @@ const UserSignup = ({ setIsLoggedIn }) => {
                             <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
                                 <svg onClick={()=>setError(null)} className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <title>Close</title>
-                                    <path d="M14.348 5.652a1 1 0 10-1.414-1.414L10 7.172 7.066 4.238a1 1 0 00-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 001.414 1.414L10 12.828l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934z"/>
+                                    <path d="M14.348 5.652a1 1 0 10-1.414-1.414L10 7.172 7.066 4.238a1 1 00-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 001.414 1.414L10 12.828l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934z"/>
                                 </svg>
                             </span>
                         </div>
@@ -137,7 +132,6 @@ const UserSignup = ({ setIsLoggedIn }) => {
                                     className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="Email address"
                                     value={email} 
-
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
@@ -166,14 +160,13 @@ const UserSignup = ({ setIsLoggedIn }) => {
                     </form>
                 </div>
 
-
-                    {/* ALready Have an accound? */}
+                {/* ALready Have an accound? */}
                 <p className="mt-2 text-center text-sm text-gray-600">
-                            Already Have an Account?{" "}
-                            <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                                Login Here
-                            </Link>
-                        </p>
+                    Already Have an Account?{" "}
+                    <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                        Login Here
+                    </Link>
+                </p>
             </div>
 
             {/* Captain Login Button */}

@@ -5,7 +5,7 @@ import { API_URL } from "../utils/constants";
 import { useRecoilState } from "recoil";
 import { userContextAtom } from "../store/atom/UserContext";
 
-const UserLogin = ({message, setIsLoggedIn}) => {
+const UserLogin = ({message}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error , setError] = useState(null);
@@ -28,7 +28,6 @@ const UserLogin = ({message, setIsLoggedIn}) => {
             if(response.status ==200){
                 localStorage.setItem('token' , response.data.token);
                 setUser(response.data.user);
-                setIsLoggedIn(true);
                 Navigate('/home');
             }
             console.log("Got this response : " , response);
