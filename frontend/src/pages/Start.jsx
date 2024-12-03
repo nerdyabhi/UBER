@@ -1,17 +1,45 @@
 import { Link } from "react-router-dom";
+import LiveTracking from "../components/LiveTracking";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 
 const Start = () => {
+    const [userCoordinates , setUserCoordinates] = useState(null);
+
+    useEffect(() => {
+        const fetchCoordinates = async () => {
+            if (!userCoordinates) {
+                const url = `https://ipinfo.io/json?token=2e1d3d6f06dc4e`;
+                try {
+                    const response = await axios.get(url);
+                    console.log(response);
+                    
+                    const loc = response.data.loc.split(',');
+                    setUserCoordinates({ ltd: parseFloat(loc[0]), lng: parseFloat(loc[1]) });
+                } catch (error) {
+                    console.log("Failed to fetch location data", error);
+                }
+            }
+        };
+        fetchCoordinates();
+    }, [])
+
     return (
-        <div className="w-full h-[100vh] bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 flex flex-col justify-between">
-            <div className="flex flex-col items-start p-5">
-                <img className="h-12 my-5" src="src/assets/images/logo.png" alt="Logo" />
-            </div>
-            <div className="bg-white w-full flex flex-col py-10 px-5 items-center justify-center rounded-t-3xl shadow-lg">
-                <h1 className="font-bold text-2xl mb-5 text-gray-800">Get Started</h1>
-                <Link className=" text-center  font-semibold text-lg w-2/4 max-w-[300px] bg-black rounded-lg text-white py-3 px-5 hover:bg-gray-800 transition duration-300" to='/login'><button >Continue</button></Link>
-            </div>
+      <div className="h-[100vh] w-full relative">
+        <div className="absolute top-4 z-50 left-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Uber Logo" className="h-8" />
         </div>
+        {userCoordinates && <div className="h-[90%]"><LiveTracking userCoordinates={userCoordinates} className="h-full w-full" /> </div>}
+        <div className="bg-white absolute bottom-0 w-full h-[10vh] rounded-t-3xl shadow-lg flex items-center justify-center">
+          <Link 
+            to="/home" 
+            className="bg-black text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-800 transition-all duration-300 shadow-md"
+          >
+            Get Started
+          </Link>
+        </div>
+      </div>
     );
 }
 
