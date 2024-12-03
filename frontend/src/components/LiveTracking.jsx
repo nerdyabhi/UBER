@@ -69,7 +69,7 @@ const LiveTracking = ({userCoordinates, captainCoordinates, vehicleType , pickup
     ] : [];
 
     return (
-        <div className="h-[90vh] absolute top-0 z-5 w-full">
+        <div className="h-[85vh] absolute top-0 z-5 w-full">
             <MapContainer
                 center={determineCenter()}
                 zoom={13}

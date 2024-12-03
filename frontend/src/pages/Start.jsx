@@ -30,11 +30,11 @@ const Start = () => {
         <div className="absolute top-4 z-50 left-4">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Uber Logo" className="h-8" />
         </div>
-        {userCoordinates && <div className="h-[90%]"><LiveTracking userCoordinates={userCoordinates} className="h-full w-full" /> </div>}
-        <div className="bg-white absolute bottom-0 w-full h-[10vh] rounded-t-3xl shadow-lg flex items-center justify-center">
+        {userCoordinates && <div className="h-[80%]"><LiveTracking userCoordinates={userCoordinates} className="h-full w-full" /> </div>}
+        <div className="bg-white absolute h-[20%] bottom-0 w-full py-2 rounded-t-3xl shadow-lg flex items-center justify-center">
           <Link 
             to="/home" 
-            className="bg-black text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-800 transition-all duration-300 shadow-md"
+            className="bg-black text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-800 transition-all duration-300 shadow-md"
           >
             Get Started
           </Link>
