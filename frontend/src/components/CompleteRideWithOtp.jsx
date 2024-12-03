@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { API_URL } from "../utils/constants";
 
-export default function CompleteRideWithOtp({ completeRideData, fare, onComplete }) {
+export default function CompleteRideWithOtp({ completeRideData, fare, onComplete , setCompleteRideData }) {
     const [otp, setOtp] = useState('');
     const [error, setError] = useState(null);
 
@@ -21,8 +21,9 @@ export default function CompleteRideWithOtp({ completeRideData, fare, onComplete
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-                
+
                 console.log(response);
+                setCompleteRideData(null);
                 
             } catch (error) {
                 console.error("Error completing the ride:", error);

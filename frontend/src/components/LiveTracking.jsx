@@ -13,10 +13,11 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const LiveTracking = ({userCoordinates, captainCoordinates, vehicleType}) => {
+const LiveTracking = ({userCoordinates, captainCoordinates, vehicleType , pickup , destination}) => {
     const defaultCoordinates = { ltd: 28.7041, lng: 77.1025 }; // Delhi coordinates
     console.log(userCoordinates , captainCoordinates);
-    
+    pickup = pickup || "Pickup Location";
+    destination = destination || "Destination Location";
     // Initialize with provided coordinates or default
     const [captainLocation, setCaptainLocation] = useState(captainCoordinates || null);
     const [userLocation, setUserLocation] = useState(userCoordinates || null);
@@ -32,7 +33,7 @@ const LiveTracking = ({userCoordinates, captainCoordinates, vehicleType}) => {
             setCaptainLocation(captainCoordinates);
         }
     }, [captainCoordinates]);
-    
+
     const captainIcon = new L.Icon({
         iconUrl: vehicleType === "car" ? CAR_IMG : 
                 vehicleType === "motorcycle" ? MOTO_IMG : AUTO_IMG,
@@ -93,7 +94,7 @@ const LiveTracking = ({userCoordinates, captainCoordinates, vehicleType}) => {
                         position={[userLocation.ltd, userLocation.lng]}
                         icon={userIcon}
                     >
-                        <Popup>Pickup Location</Popup>
+                        <Popup>{pickup}</Popup>
                     </Marker>
                 )}
 
