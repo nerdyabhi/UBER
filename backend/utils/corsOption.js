@@ -33,4 +33,4 @@ const corsOptions = {
     preflightContinue: false,
     optionsSuccessStatus: 204
 };
-moudle.exports =  corsOptions;
+module.exports =  corsOptions;
