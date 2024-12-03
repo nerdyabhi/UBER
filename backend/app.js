@@ -16,7 +16,10 @@ connectToDB();
 
 
 // Basic Middlewares
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({
+    origin: '*', // Allow all origins (not secure for production)
+}));
+
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
