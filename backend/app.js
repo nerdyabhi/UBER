@@ -5,13 +5,13 @@ const app = express();
 const cors = require('cors');
 const connectToDB = require('./db/connection');
 const cookieParser = require('cookie-parser');
+const corsOptions = './utils/corsOption';
 
 /** Routes */
 const userRouter = require('./routes/user.routes');
 const captainRouter = require('./routes/captain.routes')
 const mapRouter = require('./routes/maps.routes');
 const rideRouter = require('./routes/rides.routes');
-import corsOptions from './utils/corsOption';
 /** Database connection. */
 connectToDB(); 
 

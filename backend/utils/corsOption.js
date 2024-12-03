@@ -1,7 +1,7 @@
 
 const allowedOrigins = [
-    'https://sasta-uber.vercel.app/',
-    'https://uber.abhi.works/',
+    'https://sasta-uber.vercel.app',
+    'https://uber.abhi.works',
     'http://localhost:5174'
 ];
 
@@ -33,5 +33,4 @@ const corsOptions = {
     preflightContinue: false,
     optionsSuccessStatus: 204
 };
-
-export default corsOptions;
+moudle.exports =  corsOptions;
