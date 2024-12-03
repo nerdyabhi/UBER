@@ -10,10 +10,17 @@ const HomePageGuard = ({children}) => {
     const token = localStorage.getItem('token');
     const [user, setUser] = useRecoilState(userContextAtom);
 
-    if (!token) {
-        Navigate('/login');
-        return;
-    }
+    useEffect(() => {
+        if (!token) {
+            Navigate('/login');
+        }
+    }, [token, Navigate]);
+
+    useEffect(() => {
+        if(!token && !user){
+            Navigate('/login');
+        }
+    }, [token, user, Navigate]);
 
     useEffect(() => {
         const getProfile = async () => {
@@ -36,21 +43,19 @@ const HomePageGuard = ({children}) => {
         };
 
         getProfile();
-    }, [token]);
+    }, [token, Navigate]);
 
+    useEffect(() => {
+        if(!user) {
+            Navigate('/login');
+        }
+    }, [user, Navigate]);
 
-
-
-    if(!user) {
-        return <h1>No context is there!</h1>;
-    }
     return (
         <>
             {children}
         </>
     )
-
-    
 }
 
 export default HomePageGuard;

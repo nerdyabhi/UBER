@@ -13,7 +13,6 @@ const CaptainHomeGuard = ({children}) => {
     useEffect(() => {
         if(!token) {
             Navigate('/login');
-            return;
         }
 
         axios.get(API_URL + '/captain/profile', {
@@ -25,15 +24,15 @@ const CaptainHomeGuard = ({children}) => {
                 console.log("succesfully , Saved the captain");
                 setCaptain(response.data.captain);
             } else {
-                Navigate('/login');
+                Navigate('/captain/login');
             }
         }).catch(() => {
-            Navigate('/login');
+            Navigate('/captain/login');
         });
     }, [token]);
 
     if(!captain) {
-        Navigate('/login')
+        Navigate('/captain/login')
     }
     return (
         <>
