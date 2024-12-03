@@ -11,15 +11,13 @@ const userRouter = require('./routes/user.routes');
 const captainRouter = require('./routes/captain.routes')
 const mapRouter = require('./routes/maps.routes');
 const rideRouter = require('./routes/rides.routes');
+import corsOptions from './utils/corsOption';
 /** Database connection. */
 connectToDB(); 
 
 
 // Basic Middlewares
-app.use(cors({
-    origin: 'http://localhost:5174',
-    credentials:true,
-}));
+app.use(cors(corsOptions));
 
 
 
