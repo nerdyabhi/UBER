@@ -184,25 +184,17 @@ router.post('/startRide', authCaptain, async (req, res) => {
 
             ride.status = 'ongoing';
             await ride.save();
-
-            if (ride.user && ride.user.socketId) {
-                sendMessageToSocketId(ride.user.socketId, {
+            const user = await userModel.findById(ride.user);
+            
+            if (user && user.socketId) {
+                sendMessageToSocketId(user.socketId, {
                     event: 'ride-started',
                     data: {
                         ride:ride,
                     }
                 });
             }
-
-            if (ride.captain && ride.captain.socketId) {
-                sendMessageToSocketId(ride.captain.socketId, {
-                    event: 'ride-started',
-                    data: {
-                        ride: ride,
-                    }
-                });
-            }
-            res.status(200).json(ride);
+            res.status(200).json(ride);   
         } catch (error) {
             console.error('Error starting ride:', error);
             res.status(500).json({ message: 'Internal server error' });

@@ -27,9 +27,9 @@ const Home = ()=>{
     const [rideData , setRideData] = useState(null);
     const [confirmedRideData , setConfirmedRideData] = useState(null);
     const [activeField , setActiveField] = useState(null);
-    const [userCoordinates , setUserCoordinates] = useState(null);
-    const [captainCoordinates , setCaptainCoordinates] = useState(null);
-
+    const [pickupCoordinates , setPickupCoordinates] = useState(null);
+    const [destinationCoordinates , setDestinationCoordinates] = useState(null);
+    const[rideStarted , setRidestarted] = useState(null);
 
     const token = localStorage.getItem('token');
     const socket = useContext(SocketContext);
@@ -64,21 +64,21 @@ const Home = ()=>{
     
     useEffect(() => {
         const fetchCoordinates = async () => {
-            if (!userCoordinates) {
+            if (!pickupCoordinates) {
                 const url = `https://ipinfo.io/json?token=2e1d3d6f06dc4e`;
                 try {
                     const response = await axios.get(url);
                     console.log(response);
                     
                     const loc = response.data.loc.split(',');
-                    setUserCoordinates({ ltd: parseFloat(loc[0]), lng: parseFloat(loc[1]) });
+                    setPickupCoordinates({ ltd: parseFloat(loc[0]), lng: parseFloat(loc[1]) });
                 } catch (error) {
                     console.log("Failed to fetch location data", error);
                 }
             }
         };
         fetchCoordinates();
-    }, [userCoordinates])
+    }, [])
 
     useEffect(() => {
         if (user) {
@@ -102,12 +102,19 @@ const Home = ()=>{
         socket.on('ride-accepted', handleRideAccepted);
         socket.on('error', handleError); 
         socket.on('ride-started' ,async(data)=>{
-            setUserCoordinates(data?.ride?.pickupCoordinates);
-            setCaptainCoordinates(data.ride.destinationCoordinates)
+            console.log("Ride Got started --burahhhh");
+            
+            setPanelOpen(false);
+            setVehiclePanelOpen(false);
+            setConfirmedVehiclePanel(false);
+            setWaitingForDriverPanel(false);
+            setConfirmedRideData(null);
+
         } )
 
       
     }, [socket])
+
 
     /*@ Toggle between locations to save api referes */
     const locations = useAutoComplete(panelOpen ? (document.activeElement?.placeholder?.includes('pickup') ? pickup : destination) : pickup, token);
@@ -116,10 +123,10 @@ const Home = ()=>{
     if(!user) return <h1> Please Login to continue</h1>
 
     return(
+        <>
       <div className="flex flex-col max-w-[100vw] h-[100vh] w-[100vw]  transition-all duration-200">
-        <div className="flex w-[100vw] h-[60vh]  absolute top-0 z-0">
-            {userCoordinates && < LiveTracking userCoordinates={userCoordinates} captainCoordinates={captainCoordinates}/>}
-        {!userCoordinates && <LiveTracking />}
+        <div className="flex w-[100vw] h-[90vh]  absolute top-0 z-10">
+            {pickupCoordinates && < LiveTracking userCoordinates={pickupCoordinates}  captainCoordinates={destinationCoordinates}/>}
 
         </div>
         <div className="logo absolute top-4 left-4">
@@ -181,7 +188,7 @@ const Home = ()=>{
         </div>}
 
        {confirmedVehiclePanel && fares&& <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
-            <ConfirmedVehicle rideData={rideData} setRideData={setRideData}  fares={fares} pickup={pickup} destination={destination} vehicleType={vehicleType} setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} />
+            <ConfirmedVehicle rideData={rideData} setRideData={setRideData}  fares={fares} pickup={pickup} destination={destination} vehicleType={vehicleType} setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} setPickupCoordinates={setPickupCoordinates} setDestinationCoordinates={setDestinationCoordinates} />
         </div>}
 
        {WaitingForDriverPanel && <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
@@ -193,6 +200,7 @@ const Home = ()=>{
         {confirmedRideData && <OngoingRide rideData={rideData} confirmedRideData={confirmedRideData}/>}
         
       </div>
+      </>
     )
 }
 

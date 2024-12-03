@@ -26,7 +26,7 @@ const getFare= async(pickup, destination) =>{
         };
         return {fares , distanceInKm  };
     }
-    throw new Error("Unable to calculate fare");
+   return res.status(400).json({message:"Please send valid details"});
 }
 
 const getOTP = (num)=>{

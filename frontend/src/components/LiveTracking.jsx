@@ -1,8 +1,9 @@
 // LiveTracking.jsx
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { AUTO_IMG, CAR_IMG, MOTO_IMG } from '../utils/constants';
 
 // Fix for default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -11,89 +12,65 @@ L.Icon.Default.mergeOptions({
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
-import { AUTO_IMG, CAR_IMG, MOTO_IMG } from '../utils/constants';
-import { useContext } from 'react';
-import { SocketContext } from '../store/atom/SocketContext';
 
-const LiveTracking = ({userCoordinates , captainCoordinates} ) => {
-    userCoordinates = userCoordinates || { ltd: 28.7041, lng: 77.1025 }; // Default to Delhi coordinates
-    captainCoordinates = captainCoordinates || { ltd: 28.6139, lng: 77.2090 }; // Default to Delhi coordinates
-    const [captainLocation, setCaptainLocation] = useState(captainCoordinates); // Delhi coordinates
-    if(! userCoordinates && !captainCoordinates){
-        setCaptainLocation( { ltd: 28.6139, lng: 77.2090 })
-    }
-    const [userLocation, setUserLocation] = useState(userCoordinates); // Nearby Delhi location
-
-    const [route, setRoute] = useState([]);
+const LiveTracking = ({userCoordinates, captainCoordinates, vehicleType}) => {
+    const defaultCoordinates = { ltd: 28.7041, lng: 77.1025 }; // Delhi coordinates
+    console.log(userCoordinates , captainCoordinates);
+    
+    // Initialize with provided coordinates or default
+    const [captainLocation, setCaptainLocation] = useState(captainCoordinates || null);
+    const [userLocation, setUserLocation] = useState(userCoordinates || null);
 
     useEffect(() => {
-        if (captainLocation && userLocation) {
-            setRoute([
-                [captainLocation?.ltd, captainLocation.lng],
-                [userLocation.ltd, userLocation.lng]
-            ]);
+        if (userCoordinates) {
+            setUserLocation(userCoordinates);
         }
-    }, [captainLocation, userLocation]);
-    const socket = useContext(SocketContext);
+    }, [userCoordinates]);
 
-    const rideData =  {
-        "ride": {
-            "user": "674cadff8fa2bbed3fb18120",
-            "pickup": "Howrah",
-            "destination": "kolkata",
-            "fare": 200.35,
-            "status": "pending",
-            "vehicleType":"Car",
-            "distance": 15035,
-            "otp": "913481",
-            "_id": "674cc49907fd28f262b9e1d1",
-            "__v": 0
-        },
-        "user": {
-            "fullName": {
-                "firstName": "Abhi",
-                "lastName": "Sharma"
-            },
-            "_id": "674cadff8fa2bbed3fb18120",
-            "email": "abhi@gmail.com",
-            "__v": 0,
-            "socketId": "ULKoKgM6k9T_qHRRAAAG"
+    useEffect(() => {
+        if (captainCoordinates) {
+            setCaptainLocation(captainCoordinates);
         }
-    }
-
+    }, [captainCoordinates]);
+    
     const captainIcon = new L.Icon({
-        iconUrl: rideData?.vehicleType === "Car" ? CAR_IMG : 
-                rideData?.vehicleType === "Motorcycle" ? MOTO_IMG : AUTO_IMG,
+        iconUrl: vehicleType === "car" ? CAR_IMG : 
+                vehicleType === "motorcycle" ? MOTO_IMG : AUTO_IMG,
         iconSize: [35, 35],
         iconAnchor: [17, 35],
         popupAnchor: [0, -35]
     });
 
     const userIcon = new L.Icon({
-        iconUrl: '/user-icon.png',
+        iconUrl: MOTO_IMG,
         iconSize: [35, 35],
         iconAnchor: [17, 35],
         popupAnchor: [0, -35]
     });
 
-    useEffect(() => {
-        if (socket) {
-            socket.on('captain-location-update', (location) => {
-                setCaptainLocation(location);
-            });
-
-            return () => {
-                socket.off('captain-location-update');
-            };
+    // Determine center based on available coordinates
+    const determineCenter = () => {
+        if (captainLocation && userLocation) {
+            return [(captainLocation.ltd + userLocation.ltd) / 2, 
+                   (captainLocation.lng + userLocation.lng) / 2];
+        } else if (captainLocation) {
+            return [captainLocation.ltd, captainLocation.lng];
+        } else if (userLocation) {
+            return [userLocation.ltd, userLocation.lng];
         }
-    }, [socket]);
+        return [defaultCoordinates.ltd, defaultCoordinates.lng];
+    };
 
-    const center = [captainLocation?.ltd, captainLocation?.lng] || [userLocation.ltd, userLocation.lng] || [20.5937, 78.9629]; // India center
+    // Create polyline coordinates if both points exist
+    const lineCoordinates = captainLocation && userLocation ? [
+        [captainLocation.ltd, captainLocation.lng],
+        [userLocation.ltd, userLocation.lng]
+    ] : [];
 
     return (
-        <div className="h-[50vh] absolute top-0 z-5  w-full">
+        <div className="h-[50vh] absolute top-0 z-5 w-full">
             <MapContainer
-                center={center}
+                center={determineCenter()}
                 zoom={13}
                 style={{ height: '100%', width: '100%' }}
             >
@@ -107,9 +84,7 @@ const LiveTracking = ({userCoordinates , captainCoordinates} ) => {
                         position={[captainLocation.ltd, captainLocation.lng]}
                         icon={captainIcon}
                     >
-                        <Popup>
-                            Captain {rideData?.captain?.fullName?.firstName}
-                        </Popup>
+                        <Popup>Captain Location</Popup>
                     </Marker>
                 )}
 
@@ -118,10 +93,17 @@ const LiveTracking = ({userCoordinates , captainCoordinates} ) => {
                         position={[userLocation.ltd, userLocation.lng]}
                         icon={userIcon}
                     >
-                        <Popup>
-                            Pickup Location
-                        </Popup>
+                        <Popup>Pickup Location</Popup>
                     </Marker>
+                )}
+
+                {lineCoordinates.length > 0 && (
+                    <Polyline 
+                        positions={lineCoordinates}
+                        color="blue"
+                        weight={4}
+                        opacity={0.7}
+                    />
                 )}
             </MapContainer>
         </div>

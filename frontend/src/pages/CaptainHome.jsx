@@ -76,6 +76,8 @@ const CaptainHome = () => {
       console.log("Ride requested: ", data);
       setData(data);
       setFare(data.ride.fare);
+      setUserCoordinates(data?.pickupCoordinates);
+
     });
 
 
@@ -105,7 +107,8 @@ const CaptainHome = () => {
     })
     .then(response => {
       console.log("Ride confirmed: ", response.data);
-      setCompleteRideData(response.data);
+      setUserCoordinates(response.data.pickupCoordinates)
+      setCompleteRideData(response.data);      // setCaptainCoordinates(data?.destinationCoordinates)
       setData(null);
     })
     .catch(error => {
@@ -121,9 +124,9 @@ const CaptainHome = () => {
 
   return (
     <>
-      {captain && <CaptainDetails captain={captain} logoutHandler={logoutHandler} captainCoordinates = {captainCoordinates} userCoordinates={userCoordinates} />}
-      {data && <RideAvailable data={data}  setData={setData} handleConfirmRide = {handleConfirmRide} />}
-      {completeRideData && <CompleteRidewithOtp completeRideData = {completeRideData} fare =  {fare}/>}
+      {captain && <CaptainDetails captain={captain} logoutHandler={logoutHandler} captainCoordinates = {captainCoordinates} userCoordinates={userCoordinates}  />}
+      {data && <RideAvailable data={data}  setData={setData} handleConfirmRide = {handleConfirmRide}   />}
+      {completeRideData && <CompleteRidewithOtp completeRideData = {completeRideData} setCompleteRideData={setCompleteRideData} fare =  {fare}/>}
     </>
   );
 };

@@ -3,7 +3,7 @@ import { API_URL, AUTO_IMG, CAR_IMG, MOTO_IMG } from "../utils/constants";
 import { useState } from "react";
 import SearchingForDriver from "./SearchingForDriver";
 const token = localStorage.getItem('token');
-export default function ConfirmedVehicle({ setRideData , pickup, destination,  fares, vehicleType, setConfirmedVehiclePanel, setWaitingForDriverPanel }) {
+export default function ConfirmedVehicle({ setRideData , pickup, destination,  fares, vehicleType, setConfirmedVehiclePanel, setWaitingForDriverPanel , setPickupCoordinates , setDestinationCoordinates }) {
     const img = vehicleType === "Car" ? CAR_IMG : vehicleType === "Motorcycle" ? MOTO_IMG : AUTO_IMG;
     const price = fares?.fares?.fares[vehicleType];
     const distance = fares?.fares?.distanceInKm;
@@ -20,6 +20,8 @@ export default function ConfirmedVehicle({ setRideData , pickup, destination,  f
             console.log("Created a ride " , response);
             
            setRideData(response.data);
+           setPickupCoordinates(response.data.pickupCoordinates);
+           setDestinationCoordinates(response.data.destinationCoordinates)
             
         } catch (error) {
             console.log("Failed to create a ride" , error);

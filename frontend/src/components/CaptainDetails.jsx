@@ -6,7 +6,7 @@ const CaptainDetails = ({captain , logoutHandler , userCoordinates,captainCoordi
     return (
         <div className="flex h-[100vh] w-[100vw] bg-gray-400 ">
         {/* <img className="w-full h-1/2" src={IMG_URL} alt="" /> */}
-        {userCoordinates && <LiveTracking captainCoordinates={captainCoordinates} userCoordinates={userCoordinates}/>}
+        {captainCoordinates && <LiveTracking captainCoordinates={captainCoordinates} userCoordinates={userCoordinates} vehicleType={captain.vehicle.vehicleType}/>}
         {!captainCoordinates && <LiveTracking />}
 
         <div className="absolute h-1/2 bottom-0 z-100 w-full bg-white p-6 rounded-md">

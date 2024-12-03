@@ -1,9 +1,10 @@
-export default function RideAvailable({data ,setData,  handleConfirmRide}) {
+export default function RideAvailable({data ,setData,  handleConfirmRide , setUserCoordinates}) {
     const {user ,  ride} = data;
    
     const handleReject = () => {
         // Add ride rejection logic here
         setData(null);
+        setUserCoordinates(null);
     };
 
     return (

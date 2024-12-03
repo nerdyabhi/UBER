@@ -21,6 +21,7 @@ export default function CompleteRideWithOtp({ completeRideData, fare, onComplete
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
+                
                 console.log(response);
                 
             } catch (error) {
