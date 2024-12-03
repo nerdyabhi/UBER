@@ -10,25 +10,36 @@ const HomePageGuard = ({children}) => {
     const token = localStorage.getItem('token');
     const [user, setUser] = useRecoilState(userContextAtom);
 
+    if (!token) {
+        Navigate('/login');
+        return;
+    }
+
     useEffect(() => {
-        if(!token) {
-            Navigate('/login');
-            return;
-        }
-        axios.get(API_URL + '/user/profile', {
-            headers: {
-                authorization: `Bearer ${token}`
-            }
-        }).then(response => {
-            if(response.status === 200) {
-                setUser(response.data.user);
-            } else {
+        const getProfile = async () => {
+            try {
+                const response = await axios.get(API_URL + '/user/profile', {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 200) {
+                    setUser(response.data.user);
+                } else {
+                    Navigate('/login');
+                }
+            } catch (error) {
+                console.log("Error Signing In", error);
                 Navigate('/login');
             }
-        }).catch(() => {
-            Navigate('/login');
-        });
+        };
+
+        getProfile();
     }, [token]);
+
+
+
 
     if(!user) {
         return <h1>No context is there!</h1>;

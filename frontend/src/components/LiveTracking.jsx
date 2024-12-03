@@ -14,9 +14,26 @@ L.Icon.Default.mergeOptions({
 import { AUTO_IMG, CAR_IMG, MOTO_IMG } from '../utils/constants';
 import { useContext } from 'react';
 import { SocketContext } from '../store/atom/SocketContext';
-const LiveTracking = ({coordinates} ) => {
-    const [captainLocation, setCaptainLocation] = useState({ lat: 28.6139, lng: 77.2090 }); // Delhi coordinates
-    const [userLocation, setUserLocation] = useState({ lat: 28.6129, lng: 77.2295 }); // Nearby Delhi location
+
+const LiveTracking = ({userCoordinates , captainCoordinates} ) => {
+    userCoordinates = userCoordinates || { ltd: 28.7041, lng: 77.1025 }; // Default to Delhi coordinates
+    captainCoordinates = captainCoordinates || { ltd: 28.6139, lng: 77.2090 }; // Default to Delhi coordinates
+    const [captainLocation, setCaptainLocation] = useState(captainCoordinates); // Delhi coordinates
+    if(! userCoordinates && !captainCoordinates){
+        setCaptainLocation( { ltd: 28.6139, lng: 77.2090 })
+    }
+    const [userLocation, setUserLocation] = useState(userCoordinates); // Nearby Delhi location
+
+    const [route, setRoute] = useState([]);
+
+    useEffect(() => {
+        if (captainLocation && userLocation) {
+            setRoute([
+                [captainLocation?.ltd, captainLocation.lng],
+                [userLocation.ltd, userLocation.lng]
+            ]);
+        }
+    }, [captainLocation, userLocation]);
     const socket = useContext(SocketContext);
 
     const rideData =  {
@@ -71,7 +88,7 @@ const LiveTracking = ({coordinates} ) => {
         }
     }, [socket]);
 
-    const center = [captainLocation.lat, captainLocation.lng] || [userLocation.lat, userLocation.lng] || [20.5937, 78.9629]; // India center
+    const center = [captainLocation?.ltd, captainLocation?.lng] || [userLocation.ltd, userLocation.lng] || [20.5937, 78.9629]; // India center
 
     return (
         <div className="h-[50vh] absolute top-0 z-5  w-full">
@@ -87,7 +104,7 @@ const LiveTracking = ({coordinates} ) => {
                 
                 {captainLocation && (
                     <Marker 
-                        position={[captainLocation.lat, captainLocation.lng]}
+                        position={[captainLocation.ltd, captainLocation.lng]}
                         icon={captainIcon}
                     >
                         <Popup>
@@ -98,7 +115,7 @@ const LiveTracking = ({coordinates} ) => {
 
                 {userLocation && (
                     <Marker 
-                        position={[userLocation.lat, userLocation.lng]}
+                        position={[userLocation.ltd, userLocation.lng]}
                         icon={userIcon}
                     >
                         <Popup>

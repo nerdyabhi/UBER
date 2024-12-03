@@ -43,7 +43,23 @@ const rideSchema = new mongoose.Schema({
         type:String,
         selected:false
     }
-
+   ,
+    pickupCoordinates: {
+        ltd: {
+            type: Number,
+        },
+        lng: {
+            type: Number,
+        }
+    },
+    destinationCoordinates: {
+        ltd: {
+            type: Number,
+        },
+        lng: {
+            type: Number,
+        }
+    }
 })
 
 const rideModel = mongoose.model('ride' , rideSchema);

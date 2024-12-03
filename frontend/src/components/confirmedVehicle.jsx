@@ -17,6 +17,8 @@ export default function ConfirmedVehicle({ setRideData , pickup, destination,  f
                     authorization:`Bearer ${token}`
                 }
             })
+            console.log("Created a ride " , response);
+            
            setRideData(response.data);
             
         } catch (error) {

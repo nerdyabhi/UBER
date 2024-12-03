@@ -33,7 +33,7 @@ const UserLogin = ({message}) => {
             console.log("Got this response : " , response);
             
         } catch (error) {
-            const error_message = error?.response?.data?.msg|| error?.response?.data?.errors[0]?.message ;
+            const error_message = error?.response?.data?.msg || error?.response?.data?.errors?.[0]?.message;
             setError(error_message);
             
         }

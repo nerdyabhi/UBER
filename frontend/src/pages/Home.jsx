@@ -27,6 +27,10 @@ const Home = ()=>{
     const [rideData , setRideData] = useState(null);
     const [confirmedRideData , setConfirmedRideData] = useState(null);
     const [activeField , setActiveField] = useState(null);
+    const [userCoordinates , setUserCoordinates] = useState(null);
+    const [captainCoordinates , setCaptainCoordinates] = useState(null);
+
+
     const token = localStorage.getItem('token');
     const socket = useContext(SocketContext);
     const submitHandler = (e)=>{
@@ -57,6 +61,24 @@ const Home = ()=>{
         // setPickup("");
         // setDestination("");
     }
+    
+    useEffect(() => {
+        const fetchCoordinates = async () => {
+            if (!userCoordinates) {
+                const url = `https://ipinfo.io/json?token=2e1d3d6f06dc4e`;
+                try {
+                    const response = await axios.get(url);
+                    console.log(response);
+                    
+                    const loc = response.data.loc.split(',');
+                    setUserCoordinates({ ltd: parseFloat(loc[0]), lng: parseFloat(loc[1]) });
+                } catch (error) {
+                    console.log("Failed to fetch location data", error);
+                }
+            }
+        };
+        fetchCoordinates();
+    }, [userCoordinates])
 
     useEffect(() => {
         if (user) {
@@ -79,6 +101,10 @@ const Home = ()=>{
 
         socket.on('ride-accepted', handleRideAccepted);
         socket.on('error', handleError); 
+        socket.on('ride-started' ,async(data)=>{
+            setUserCoordinates(data?.ride?.pickupCoordinates);
+            setCaptainCoordinates(data.ride.destinationCoordinates)
+        } )
 
       
     }, [socket])
@@ -91,8 +117,10 @@ const Home = ()=>{
 
     return(
       <div className="flex flex-col max-w-[100vw] h-[100vh] w-[100vw]  transition-all duration-200">
-        <div className="flex w-[100vw] h-1/2  absolute top-0 z-0">
-            < LiveTracking/>
+        <div className="flex w-[100vw] h-[60vh]  absolute top-0 z-0">
+            {userCoordinates && < LiveTracking userCoordinates={userCoordinates} captainCoordinates={captainCoordinates}/>}
+        {!userCoordinates && <LiveTracking />}
+
         </div>
         <div className="logo absolute top-4 left-4">
             <img src="/uber-logo.png" alt="Uber" className="h-8" />
@@ -159,6 +187,8 @@ const Home = ()=>{
        {WaitingForDriverPanel && <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
             <WaitingForDriver setWaitingForDriverPanel={setWaitingForDriverPanel}/>
         </div>}
+
+        {/* {rideData && } */}
 
         {confirmedRideData && <OngoingRide rideData={rideData} confirmedRideData={confirmedRideData}/>}
         

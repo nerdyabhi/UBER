@@ -16,7 +16,11 @@ const CaptainHome = () => {
   const [data , setData] = useState(null);
   const [completeRideData , setCompleteRideData] = useState(false);
   const [fare , setFare] = useState(null);
+  const [userCoordinates , setUserCoordinates] = useState(null);
+  const [captainCoordinates , setCaptainCoordinates] = useState(null);
+
   const socket = useContext(SocketContext);
+
 
 
   /*@ Use Effects  */
@@ -29,6 +33,12 @@ const CaptainHome = () => {
       });
 
     }
+
+    socket?.emit('join', {
+      userId: captain?._id,
+      userType: 'captain'
+    });
+
     const updateLocation = () => {
       if (navigator.geolocation && captain) {
         navigator.geolocation.getCurrentPosition(position => {
@@ -38,6 +48,10 @@ const CaptainHome = () => {
               ltd: position.coords.latitude,
               lng: position.coords.longitude
             }
+          });
+          setCaptainCoordinates({
+            ltd: position.coords.latitude,
+            lng: position.coords.longitude
           });
         });
       }
@@ -107,7 +121,7 @@ const CaptainHome = () => {
 
   return (
     <>
-      {captain && <CaptainDetails captain={captain} logoutHandler={logoutHandler} />}
+      {captain && <CaptainDetails captain={captain} logoutHandler={logoutHandler} captainCoordinates = {captainCoordinates} userCoordinates={userCoordinates} />}
       {data && <RideAvailable data={data}  setData={setData} handleConfirmRide = {handleConfirmRide} />}
       {completeRideData && <CompleteRidewithOtp completeRideData = {completeRideData} fare =  {fare}/>}
     </>

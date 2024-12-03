@@ -2,11 +2,12 @@ import LiveTracking from "./LiveTracking";
 
 const IMG_URL = "https://images.squarespace-cdn.com/content/v1/54ff63f0e4b0bafce6932642/1613584766993-KD4G7Q9XDVVHE7EFE1JF/Two+Maps+-+Grayscale.png?format=1500w";
 
-const CaptainDetails = ({captain , logoutHandler})=>{
+const CaptainDetails = ({captain , logoutHandler , userCoordinates,captainCoordinates })=>{
     return (
         <div className="flex h-[100vh] w-[100vw] bg-gray-400 ">
         {/* <img className="w-full h-1/2" src={IMG_URL} alt="" /> */}
-        <LiveTracking/>
+        {userCoordinates && <LiveTracking captainCoordinates={captainCoordinates} userCoordinates={userCoordinates}/>}
+        {!captainCoordinates && <LiveTracking />}
 
         <div className="absolute h-1/2 bottom-0 z-100 w-full bg-white p-6 rounded-md">
             <div className="flex items-center gap-4 mb-6">

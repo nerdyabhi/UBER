@@ -35,7 +35,7 @@ const getOTP = (num)=>{
 }
 
 
-const createRide = async({user , pickup , destination , vehicleType})=>{
+const createRide = async({user , pickup , destination , vehicleType , pickupCoordinates ,destinationCoordinates })=>{
     if(!user || !pickup | !destination || !vehicleType){
         throw new Error("All field are required");
     }
@@ -47,10 +47,19 @@ const createRide = async({user , pickup , destination , vehicleType})=>{
             user,
             pickup,
             destination,
-            fare:fares[vehicleType],
-            distance:distanceInKm*1000,
-            otp:otp,
-        })
+            fare: fares[vehicleType],
+            distance: distanceInKm * 1000,
+            otp: otp,
+            pickupCoordinates: {
+            ltd: pickupCoordinates.lat,
+            lng: pickupCoordinates.lng
+            },
+            destinationCoordinates:{
+            
+                ltd: destinationCoordinates.lat,
+                lng: destinationCoordinates.lng
+            }
+        });
 
        return ride;
 }

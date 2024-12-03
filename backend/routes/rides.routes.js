@@ -55,11 +55,22 @@ router.post('/create' ,authUser,  async(req , res)=>{
    const {pickup , destination , vehicleType} = validation.data;
     
     try {
-        const ride  = await createRide({ user: req.user._id,pickup , destination , vehicleType});
+        const pickupCoordinates = await getAddressCoordinate(pickup);
+        const destinationCoordinates = await getAddressCoordinate(destination);
+        const ride = await createRide({
+            user: req.user._id,
+            pickup,
+            destination,
+            vehicleType,
+            pickupCoordinates,
+            destinationCoordinates
+        });
+
+        console.log(pickupCoordinates , destinationCoordinates);
+        
          res.status(200).json(ride);
 
         /*Sending messages to the captain */
-        const pickupCoordinates  =await getAddressCoordinate(pickup);
          ride.otp = "";
 
         const CaptainsNearby = await getCaptainsInTheRadius(pickupCoordinates.lat, pickupCoordinates.lng, 100);
@@ -71,6 +82,8 @@ router.post('/create' ,authUser,  async(req , res)=>{
                     user:req.user
                 }
             };
+            console.log("ride-requested" ,messageObject );
+            
             sendMessageToSocketId(captain.socketId, messageObject);
             
         });
@@ -172,6 +185,23 @@ router.post('/startRide', authCaptain, async (req, res) => {
             ride.status = 'ongoing';
             await ride.save();
 
+            if (ride.user && ride.user.socketId) {
+                sendMessageToSocketId(ride.user.socketId, {
+                    event: 'ride-started',
+                    data: {
+                        ride:ride,
+                    }
+                });
+            }
+
+            if (ride.captain && ride.captain.socketId) {
+                sendMessageToSocketId(ride.captain.socketId, {
+                    event: 'ride-started',
+                    data: {
+                        ride: ride,
+                    }
+                });
+            }
             res.status(200).json(ride);
         } catch (error) {
             console.error('Error starting ride:', error);
