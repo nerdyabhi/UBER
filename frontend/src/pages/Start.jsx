@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Start = () => {
     return (
-        <div className="w-full h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 flex flex-col justify-between">
+        <div className="w-full h-[100vh] bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 flex flex-col justify-between">
             <div className="flex flex-col items-start p-5">
                 <img className="h-12 my-5" src="src/assets/images/logo.png" alt="Logo" />
             </div>
