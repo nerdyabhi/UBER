@@ -17,7 +17,7 @@ connectToDB();
 
 // Basic Middlewares
 app.use(cors({
-    origin: '*', // Allow all origins (not secure for production)
+    origin: '*',
 }));
 
 
