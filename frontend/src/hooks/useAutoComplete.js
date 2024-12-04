@@ -19,7 +19,7 @@ const useAutoComplete = (input, token) => {
         }
     };
 
-    const debouncedGetAutoComplete = useDebouncing(getAutoCompleteValues, 500);
+    const debouncedGetAutoComplete = useDebouncing(getAutoCompleteValues, 200);
 
     useEffect(() => {
         if (input) {
