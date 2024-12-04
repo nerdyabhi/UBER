@@ -3,8 +3,6 @@
 
 A real-time ride-sharing application built with modern tech stack, enabling seamless transportation services.
 
-![Demo Preview](https://github.com/user-attachments/assets/02637e89-ea1f-4a12-8b93-15f490bccf5b)
-
 ## ✨ Key Features
 
 - 🌍 Real-time ride tracking and mapping
@@ -24,25 +22,34 @@ A real-time ride-sharing application built with modern tech stack, enabling seam
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/yourusername/uber-clone.git
-cd uber-clone
+git clone https://github.com/nerdyabhi/uber.git
+cd uber
+cd backend
 npm install
-npm start
+node server.js
+cd ..
+cd frontend
+npm install
+npm run dev
 ```
 
 ## 📝 Environment Variables
 
-# Backend
-```javascript
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-GOOGLE_MAPS_API_KEY=your_google_maps_key
-SOCKET_SERVER_URL=your_socket_server_url
+### Backend
+```js
+PORT=xxx
+MONGO_URL="Your MONGO connecting string"
+JWT_SECRET = "JWT SECRET"
+GOOGLE_MAP_API = "API"
+
+
 ```
-# Frontend
-```javascript
+### Frontend
+```js
+
 VITE_API_URL=your_backend_api_url
-VITE_SOCKET_URL=your_socket_server_url```
+VITE_SOCKET_URL=your_socket_server_url
+```
 
 # 📡 API Endpoints
 ### Authentication
@@ -66,8 +73,7 @@ GET /api/maps/get-coordinates    # Get coordinates from address
 GET /api/maps/get-Distance-time  # Get distance and time
 GET /api/maps/autocomplete       # Get location suggestions
 ```
-Here's the information formatted as a table:
-Here’s an aesthetic markdown table with a clear heading for your GitHub:
+
 
 ---
 
@@ -82,3 +88,6 @@ Here’s an aesthetic markdown table with a clear heading for your GitHub:
 | `ride-confirmed`          | Ride confirmation             | `{ rideId: string, captainId: string }`                                    |
 
 ---
+
+
+Made with 💖 by nerdy Abhi.
