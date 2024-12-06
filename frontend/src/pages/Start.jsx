@@ -2,18 +2,20 @@ import { Link } from "react-router-dom";
 import LiveTracking from "../components/LiveTracking";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import Navbar from "../components/Navbar";
+import Form from "../components/Form"
+import UberMap from "../components/UberMap";
 
 const Start = () => {
     const [userCoordinates , setUserCoordinates] = useState(null);
-
+    const [pickupCoordinates , setPickupCoordinates] = useState(null);
+    const [destinationCoordinates , setDestinationCoordinates] = useState(null);
     useEffect(() => {
         const fetchCoordinates = async () => {
             if (!userCoordinates) {
                 const url = `https://ipinfo.io/json?token=2e1d3d6f06dc4e`;
                 try {
                     const response = await axios.get(url);
-                    console.log(response);
                     
                     const loc = response.data.loc.split(',');
                     setUserCoordinates({ ltd: parseFloat(loc[0]), lng: parseFloat(loc[1]) });
@@ -26,19 +28,26 @@ const Start = () => {
     }, [])
 
     return (
-      <div className="h-[100vh] w-full relative">
-        <div className="absolute top-4 z-50 left-4">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Uber Logo" className="h-8" />
+      <div className="h-[100vh] bg-gray-50 max-w-[100%] w-[95%] relative mx-5">
+      <div className="absolute inset-0 -z-10 "></div>
+        {/* Navbar */}
+          <Navbar/>
+          <div className="flex flex-col md:flex-row items-center justify-center min-h-[80vh]">
+            {/* Left Div */}
+          <div className=" w-full md:w-[40vw] flex flex-col gap-5 border-2 m-2 py-10">
+            {/* Heading */}
+                  <h1 className="font-bold text-4xl text-center">Go anywhere with <span className="font-sans">Uber</span></h1>
+                  <Form setDestinationCoordinates= {setDestinationCoordinates} setPickupCoordinates={setPickupCoordinates}/>
+            </div>
+
+            {/* Map */}
+          <div className=" relative w-full md:w-[50vw] h-[80vh] md:h-[70vh] p-10 ">
+              {userCoordinates  && <LiveTracking userCoordinates={userCoordinates} pickupCoordinates={pickupCoordinates} destinationCoordinates={destinationCoordinates}/>}
+             
+          </div>
+
         </div>
-        {userCoordinates && <div className="h-[80%]"><LiveTracking userCoordinates={userCoordinates} className="h-full w-full" /> </div>}
-        <div className="bg-white absolute h-[20%] bottom-0 w-full py-2 rounded-t-3xl shadow-lg flex items-center justify-center">
-          <Link 
-            to="/home" 
-            className="bg-black text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-800 transition-all duration-300 shadow-md"
-          >
-            Get Started
-          </Link>
-        </div>
+     
       </div>
     );
 }

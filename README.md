@@ -1,25 +1,15 @@
 ![image](https://github.com/user-attachments/assets/02637e89-ea1f-4a12-8b93-15f490bccf5b)
-# 🚗 Uber Clone
 
-A real-time ride-sharing application built with modern tech stack, enabling seamless transportation services.
 
 ## ✨ Key Features
 
-- 🌍 Real-time ride tracking and mapping
-- 🔄 Live driver-passenger matching
-- 💰 Dynamic pricing & fare estimation
-- 🔐 Secure user authentication
-- 📱 Responsive cross-platform design
+-  Real-time ride tracking and mapping
+-  Live driver-passenger matching
+-  Dynamic pricing & fare estimation
+-  Secure user authentication
+-  Responsive cross-platform design
 
-## 🛠️ Built With
-
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
-![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
-![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
-![Socket.IO](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)
-
-## 🚀 Quick Start
+####  Quick Start
 
 ```bash
 git clone https://github.com/nerdyabhi/uber.git
@@ -33,9 +23,9 @@ npm install
 npm run dev
 ```
 
-## 📝 Environment Variables
+### Environment Variables
 
-### Backend
+#### Backend
 ```js
 PORT=xxx
 MONGO_URL="Your MONGO connecting string"
@@ -83,11 +73,9 @@ GET /api/maps/autocomplete       # Get location suggestions
 |----------------------------|-------------------------------|-----------------------------------------------------------------------------|
 | `join`                    | User/Captain connection       | `{ userId: string, userType: "user" | "captain" }`                         |
 | `update-location-captain` | Update captain's location     | `{ userId: string, location: { ltd: number, lng: number } }`               |
-| `captain-location-update` | Broadcast captain location    | `{ ltd: number, lng: number }`                                             |
 | `ride-request`            | New ride request              | `{ rideId: string, pickup: string, destination: string }`                  |
 | `ride-confirmed`          | Ride confirmation             | `{ rideId: string, captainId: string }`                                    |
 
 ---
 
 
-Made with 💖 by nerdy Abhi.

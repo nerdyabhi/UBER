@@ -11,6 +11,7 @@ import CaptainLogin from './pages/CaptainLogin';
 import CaptainHomeGuard from './pages/CaptainHomeGuard';
 import CaptainHome from './pages/CaptainHome';
 import SocketProvider from './store/atom/SocketContext';
+import UberMap from './components/UberMap';
 
 const App = ()=>{
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,6 +26,7 @@ const App = ()=>{
         <Route path='/captain/login' element={<CaptainLogin setIsLoggedIn={setIsLoggedIn}/>}/>
         <Route path='/Home' element={<HomeGuard>{<Home/>}</HomeGuard>}/>
         <Route path='/captain/Home' element={<CaptainHomeGuard>{<CaptainHome/>}</CaptainHomeGuard>}/>
+        <Route path='/maps' element={<UberMap/>} />
       </Routes>
     </SocketProvider>
   )

@@ -1,114 +1,168 @@
 // LiveTracking.jsx
-import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { AUTO_IMG, CAR_IMG, MOTO_IMG } from '../utils/constants';
+import "leaflet-routing-machine";
+
 
 // Fix for default marker icons
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
 
-const LiveTracking = ({userCoordinates, captainCoordinates, vehicleType , pickup , destination}) => {
-    const defaultCoordinates = { ltd: 28.7041, lng: 77.1025 }; // Delhi coordinates
-    console.log(userCoordinates , captainCoordinates);
-    pickup = pickup || "Pickup Location";
-    destination = destination || "Destination Location";
-    // Initialize with provided coordinates or default
-    const [captainLocation, setCaptainLocation] = useState(captainCoordinates || null);
-    const [userLocation, setUserLocation] = useState(userCoordinates || null);
+const LiveTracking = ({userCoordinates, pickupCoordinates, destinationCoordinates}) => {
+    const defaultCoordinates = userCoordinates ||  { ltd: 28.7041, lng: 77.1025 }; // Delhi coordinates
+
+        console.log(pickupCoordinates , destinationCoordinates);
+        
+    // If No Coordinates , show default map
+    if(!pickupCoordinates || !destinationCoordinates){
+        return (
+            <div className=" top-5 z-100  h-[100%] w-[100%]">
+                <MapContainer
+                    center={[defaultCoordinates.ltd , defaultCoordinates.lng]}
+                    zoom={13}
+                    style={{ height: '100%', width: '100%' }}
+                >
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+    
+                </MapContainer>
+            </div>
+        );
+    }
+
+    // Routing bgera bgera settings 
+     // Custom hook to handle zooming to show both locations
+  function ZoomToLocations() {
+    const map = useMap();
+    useEffect(() => {
+      if (pickupCoordinates && destinationCoordinates) {
+        const bounds = L.latLngBounds(
+          L.latLng(pickupCoordinates.ltd, pickupCoordinates.lng),
+          L.latLng(destinationCoordinates.ltd, destinationCoordinates.lng)
+        );
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }, [pickupCoordinates, destinationCoordinates, map]);
+
+    return null;
+  }
+
+  // Custom component to handle routing
+  function RoutingMachine() {
+    const map = useMap();
+    useEffect(() => {
+        if (pickupCoordinates && destinationCoordinates) {
+            const routeControl = L.Routing.control({
+                waypoints: [
+                    L.latLng(pickupCoordinates.ltd, pickupCoordinates.lng),
+                    L.latLng(destinationCoordinates.ltd, destinationCoordinates.lng),
+                ],
+                createMarker: () => null,
+                lineOptions: {
+                    styles: [{ color: "black", weight: 5, opacity: 1 }],
+                },
+                show: false, // Disable the route summary display
+                routeWhileDragging: false, // Optional: Prevents dragging of routes
+            }).addTo(map);
+
+            // Remove the text panel from the DOM
+            const routeContainer = document.querySelector(".leaflet-routing-container");
+            if (routeContainer) {
+                routeContainer.style.display = "none";
+            }
+
+            return () => map.removeControl(routeControl);
+        }
+    }, [map, pickupCoordinates, destinationCoordinates]);
+
+    return null;
+}
+
+    
+const PopupMarker = ({ position, icon }) => {
+    const markerRef = useRef(null);
 
     useEffect(() => {
-        if (userCoordinates) {
-            setUserLocation(userCoordinates);
+        if (markerRef.current) {
+            markerRef.current.openPopup();
         }
-    }, [userCoordinates]);
-
-    useEffect(() => {
-        if (captainCoordinates) {
-            setCaptainLocation(captainCoordinates);
-        }
-    }, [captainCoordinates]);
-
-    const captainIcon = new L.Icon({
-        iconUrl: vehicleType === "car" ? CAR_IMG : 
-                vehicleType === "motorcycle" ? MOTO_IMG : AUTO_IMG,
-        iconSize: [35, 35],
-        iconAnchor: [17, 35],
-        popupAnchor: [0, -35]
-    });
-
-    const userIcon = new L.Icon({
-        iconUrl: MOTO_IMG,
-        iconSize: [35, 35],
-        iconAnchor: [17, 35],
-        popupAnchor: [0, -35]
-    });
-
-    // Determine center based on available coordinates
-    const determineCenter = () => {
-        if (captainLocation && userLocation) {
-            return [(captainLocation.ltd + userLocation.ltd) / 2, 
-                   (captainLocation.lng + userLocation.lng) / 2];
-        } else if (captainLocation) {
-            return [captainLocation.ltd, captainLocation.lng];
-        } else if (userLocation) {
-            return [userLocation.ltd, userLocation.lng];
-        }
-        return [defaultCoordinates.ltd, defaultCoordinates.lng];
-    };
-
-    // Create polyline coordinates if both points exist
-    const lineCoordinates = captainLocation && userLocation ? [
-        [captainLocation.ltd, captainLocation.lng],
-        [userLocation.ltd, userLocation.lng]
-    ] : [];
+    }, [position, icon]);
 
     return (
-        <div className="h-[85vh] absolute top-0 z-5 w-full">
+        <Marker ref={markerRef} position={position} icon={icon}>
+            <Popup>
+                <div>
+                    <h3 style={{ margin: 0 }}>Title</h3>
+                    <p style={{ margin: 0, fontSize: "12px" }}>Content aayega yahan.</p>
+                </div>
+            </Popup>
+        </Marker>
+    );
+};
+
+
+
+  // Custom DivIcon for pickup (black circle with white center)
+  const pickupIcon = new L.DivIcon({
+    html: `
+      <div style="width: 20px; height: 20px; background-color: black; position: relative; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+        <div style="width: 5px; height: 5px;  background-color: white; border-radius: 100%;"></div>
+      </div>
+    `,
+    iconSize: [0, 0],
+    iconAnchor: [15, 15],
+    popupAnchor: [0, -15],
+  });
+
+    // Automatically open popup and customize content
+
+
+
+
+  // Custom DivIcon for destination (black square with white center)
+  const destinationIcon = new L.DivIcon({
+    html: `
+      <div style="width: 20px; height: 20px; background-color: black; position: relative; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 5px; height: 5px; background-color: white;"></div>
+      </div>
+    `,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    popupAnchor: [0, -15],
+  });
+
+    // Ab agar , Pickup and destination dono hai toh..
+    return (
+        <div className=" top-5 z-100  h-[100%] w-[100%]">
             <MapContainer
-                center={determineCenter()}
-                zoom={13}
-                style={{ height: '100%', width: '100%' }}
-            >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                
-                {captainLocation && (
-                    <Marker 
-                        position={[captainLocation.ltd, captainLocation.lng]}
-                        icon={captainIcon}
-                    >
-                        <Popup>Captain Location</Popup>
-                    </Marker>
-                )}
-
-                {userLocation && (
-                    <Marker 
-                        position={[userLocation.ltd, userLocation.lng]}
-                        icon={userIcon}
-                    >
-                        <Popup>{pickup}</Popup>
-                    </Marker>
-                )}
-
-                {lineCoordinates.length > 0 && (
-                    <Polyline 
-                        positions={lineCoordinates}
-                        color="blue"
-                        weight={4}
-                        opacity={0.7}
+      center={[pickupCoordinates.ltd, pickupCoordinates.lng]}
+      zoom={13}
+      style={{ height: "100vh", width: "100%" }}
+    >
+       <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                )}
-            </MapContainer>
+
+      <ZoomToLocations />
+      <RoutingMachine />
+
+    {/* Pickup Marker */}
+    <PopupMarker position={[pickupCoordinates.ltd, pickupCoordinates.lng]} icon={pickupIcon} />
+
+    {/* Destination Marker */}
+      <Marker
+        position={[destinationCoordinates.ltd, destinationCoordinates.lng]}
+        icon={destinationIcon}
+      >
+        <Popup>Destination Location</Popup>
+      </Marker>
+    </MapContainer>
         </div>
     );
+    
 };
 
 export default LiveTracking;
