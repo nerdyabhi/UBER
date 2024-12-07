@@ -22,3 +22,8 @@ export const userCoordinatesAtom = atom({
     default:null,
     key:"userCoordinatesContext"
 })
+
+export const captainCoordinatesAtom = atom({
+    default:null,
+    key:"CaptianCoordinatesContext",
+})

@@ -1,7 +1,7 @@
 import React from 'react';
 import { CAR_IMG, MOTO_IMG, AUTO_IMG } from '../utils/constants';
 
-export default function OngoingRide({rideData, confirmedRideData}) {
+export default function OngoingRide({rideData, confirmedRideData , setConfirmedRideData}) {
     const { captain } = confirmedRideData;
     const vehicleType = captain?.vehicle?.vehicleType || 'car';
     const img = vehicleType === "car" ? CAR_IMG : vehicleType === "motorcycle" ? MOTO_IMG : AUTO_IMG;
@@ -11,13 +11,13 @@ export default function OngoingRide({rideData, confirmedRideData}) {
     return (
         <div className="fixed bottom-0 max-w-[450px] left-0 right-0 z-10 p-4 bg-gray-100 rounded-t-lg shadow-lg">
             <div className="flex justify-end mb-2">
-                <i className="cursor-pointer text-gray-500 hover:text-gray-700 fas fa-times"></i>
+                <i onClick={() => setConfirmedRideData(null)} className="cursor-pointer text-gray-500 hover:text-gray-700 fas fa-times"></i>
             </div>
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900">Your ride is on the way</h2>
                 <div className="px-3 py-1 bg-gray-100 rounded">
-                    <span className="text-sm font-medium">OTP: </span>
-                    <span className="text-lg font-bold">{otp}</span>
+                    <span className="text-sm dark:text-black font-medium">OTP: </span>
+                    <span className="text-lg dark:text-black font-bold">{otp}</span>
                 </div>
             </div>
 
@@ -56,6 +56,7 @@ export default function OngoingRide({rideData, confirmedRideData}) {
                     <button 
                         className="w-full py-4 mt-6 text-white bg-black rounded-lg font-semibold hover:bg-gray-900 transition-colors"
                         onClick={() => {
+                            setConfirmedRideData(null);
                             console.log("Processing payment...");
                         }}
                     >

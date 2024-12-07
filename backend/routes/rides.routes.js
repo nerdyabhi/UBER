@@ -52,6 +52,10 @@ router.post('/create' ,authUser,  async(req , res)=>{
         return res.status(400).json({ error: validation.error.errors });
     }
 
+    if(!req.user){
+        return res.status(400).json({error:"User Not Found"})
+    }
+
    const {pickup , destination , vehicleType} = validation.data;
     
     try {
@@ -149,6 +153,7 @@ router.post('/confirm', authCaptain, async (req, res) => {
                         id: captain._id,
                         name: captain.fullName,
                         vehicle: captain.vehicle,
+                        location:captain.location,
                     }
                 }
             });

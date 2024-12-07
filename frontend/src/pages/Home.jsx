@@ -32,6 +32,7 @@ const Home = ()=>{
     const [pickupCoordinates , setPickupCoordinates] = useRecoilState(pickupCoordinatesAtom);
     const [pickup , setPickup] = useRecoilState(pickupAtom);
     const [destinationCoordinates , setDestinationCoordinates] = useRecoilState(destinationCoordinatesAtom);
+    const [captainCoordinates , setCaptainCoordinates ] = useState(null);
     const[rideStarted , setRidestarted] = useState(null);
 
     const token = localStorage.getItem('token');
@@ -93,6 +94,8 @@ const Home = ()=>{
         const handleRideAccepted = (data) => {
             console.log("Ride got accepted  HUrray");
             console.log(data);
+            setCaptainCoordinates(data?.captain?.location);
+            setVehicleType(data?.captain?.vehicle?.vehicleType)
             setConfirmedRideData(data);
             setConfirmedVehiclePanel(false);
 
@@ -110,7 +113,11 @@ const Home = ()=>{
             setVehiclePanelOpen(false);
             setConfirmedVehiclePanel(false);
             setWaitingForDriverPanel(false);
-            setConfirmedRideData(null);
+            setPickupCoordinates(data?.pickupCoordinates);
+            setDestination(data?.destinationCoordinates);
+            console.log(rideData);
+            
+            // setConfirmedRideData(null);
 
         } )
 
@@ -131,12 +138,12 @@ const Home = ()=>{
             </div>
             
             <div className="flex  items-start w-full md:w-[90%] h-[90vh] ">
-                <LiveTracking />
+                <LiveTracking captainCoordinates={captainCoordinates} />
             </div>
 
             {vehiclePanelOpen && fares && (
               <Draggable disabled={window.innerWidth <768}>
-                <div className="absolute px-6 py-6 cursor-pointer md:max-w-[50%] max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
+                <div className="absolute px-6 dark:text-black py-6 cursor-pointer md:max-w-[50%] max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
                   <RideComponent setVehiclePanelOpen={setVehiclePanelOpen} setConfirmedVehiclePanel={setConfirmedVehiclePanel} fares={fares} setVehicleType={setVehicleType} />
                 </div>
               </Draggable>
@@ -144,7 +151,7 @@ const Home = ()=>{
 
             {confirmedVehiclePanel && fares && (
               <Draggable disabled={window.innerWidth < 768}>
-                <div className="absolute cursor-pointer px-6 w-full max-w-[450px] py-6 max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
+                <div className="absolute dark:text-black cursor-pointer px-6 w-full max-w-[450px] py-6 max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
                   <ConfirmedVehicle setVehiclePanelOpen={setVehiclePanelOpen} rideData={rideData} setRideData={setRideData} fares={fares} pickup={pickup} destination={destination} vehicleType={vehicleType} setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} setPickupCoordinates={setPickupCoordinates} setDestinationCoordinates={setDestinationCoordinates} />
                 </div>
               </Draggable>
@@ -153,7 +160,7 @@ const Home = ()=>{
         { confirmedRideData &&
             <Draggable disabled={window.innerWidth < 768}>
                 <div className="absolute  cursor-pointer  items-center justify-center  md:min-w-[450px] py-6 md:max-w-[50%] max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
-                    <OngoingRide rideData={rideData} confirmedRideData={confirmedRideData}/>
+                    <OngoingRide rideData={rideData} confirmedRideData={confirmedRideData} setConfirmedRideData={setConfirmedRideData}/>
                 </div>
             </Draggable>
         }

@@ -5,7 +5,7 @@ const Navbar = () => {
     const {theme, toggleTheme} = useDarkMode();
 
     return (
-        <div className="bg-white dark:bg-slate-900 dark:text-white h-14 w-full flex items-center justify-between px-4 mt-2 shadow-md z-100">
+        <div className="bg-white dark:bg-slate-900 dark:text-white h-14 w-full flex items-center justify-between px-4 shadow-md z-100">
             <div className="flex items-center space-x-4">
                 <Link to="/" className="font-semibold font-sans text-xl">Sasta Uber</Link>
             </div>

@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { captainContextAtom } from "../store/atom/CaptainContext";
 import axios from "axios";
 import { API_URL } from "../utils/constants";
@@ -8,16 +8,25 @@ import RideAvailable from "../components/RideAvailable";
 import CaptainDetails from "../components/CaptainDetails";
 import { SocketContext } from "../store/atom/SocketContext";
 import CompleteRidewithOtp from "../components/CompleteRideWithOtp";
+import Navbar from "../components/Navbar";
+import LiveTracking from "../components/LiveTracking";
+import { destinationAtom, destinationCoordinatesAtom, pickupAtom, pickupCoordinatesAtom } from "../store/atom/CoordinatesContext";
+import Draggable from "react-draggable";
+
 
 const CaptainHome = () => {
   const token = localStorage.getItem('token');
   const Navigate = useNavigate();
   const captain = useRecoilValue(captainContextAtom);
+  const [completeRideData , setCompleteRideData] = useState(null);
+  const[RideAvailablePanel , setRideAvailablePanel] = useState(false);
   const [data , setData] = useState(null);
-  const [completeRideData , setCompleteRideData] = useState(false);
-  const [fare , setFare] = useState(null);
-  const [userCoordinates , setUserCoordinates] = useState(null);
   const [captainCoordinates , setCaptainCoordinates] = useState(null);
+  const [pickupCoordinates , setPickupCoordinates]  = useRecoilState(pickupCoordinatesAtom)
+  const [destinationCoordinates , setDestinationCoordinates] = useRecoilState(destinationCoordinatesAtom);
+  const [pickup , setPickup] = useRecoilState(pickupAtom);
+  const [destination , setDestination] = useRecoilState(destinationAtom);
+  const [fare , setFare] = useState(null);
 
   const socket = useContext(SocketContext);
 
@@ -33,11 +42,6 @@ const CaptainHome = () => {
       });
 
     }
-
-    socket?.emit('join', {
-      userId: captain?._id,
-      userType: 'captain'
-    });
 
     const updateLocation = () => {
       if (navigator.geolocation && captain) {
@@ -64,22 +68,32 @@ const CaptainHome = () => {
   }, [captain , socket ]);
 
 
-    socket?.on('connect', () => {
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('connect', () => {
       console.log("Connected to server");
     });
 
-    socket?.on('disconnect', () => {
+    socket.on('disconnect', () => {
       console.log("Disconnected from server");
     });
 
-    socket?.on('ride-requested', (data) => {
+    socket.on('ride-requested', (data) => {
       console.log("Ride requested: ", data);
       setData(data);
+      setRideAvailablePanel(true);
       setFare(data.ride.fare);
-      setUserCoordinates(data?.pickupCoordinates);
 
     });
 
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('ride-requested');
+    };
+  }, [socket]);
 
 
   /*@Handlers */
@@ -89,7 +103,6 @@ const CaptainHome = () => {
         authorization: `Bearer ${token}`
       }
     });
-
     console.log("Logged out");
     Navigate('/captain/login');
 
@@ -97,6 +110,7 @@ const CaptainHome = () => {
   };
 
   const handleConfirmRide = ()=>{
+
     axios.post(`${API_URL}/rides/confirm`, {
       rideId: data?.ride?._id,
       captainId: captain?._id
@@ -107,9 +121,12 @@ const CaptainHome = () => {
     })
     .then(response => {
       console.log("Ride confirmed: ", response.data);
-      setUserCoordinates(response.data.pickupCoordinates)
+      // setPickupCoordinates(pick)
+      setPickupCoordinates(response?.data?.pickupCoordinates)
+      setPickup(response?.data?.pickup);
+      setDestination(response?.data?.destination)
       setCompleteRideData(response.data);      // setCaptainCoordinates(data?.destinationCoordinates)
-      setData(null);
+      setRideAvailablePanel(false);
     })
     .catch(error => {
       console.error("Error confirming ride: ", error);
@@ -120,15 +137,51 @@ const CaptainHome = () => {
 
  
   
-
-
   return (
-    <>
-      {captain && <CaptainDetails captain={captain} logoutHandler={logoutHandler} captainCoordinates = {captainCoordinates} userCoordinates={userCoordinates}  />}
-      {data && <RideAvailable data={data}  setData={setData} handleConfirmRide = {handleConfirmRide}   />}
-      {completeRideData && <CompleteRidewithOtp completeRideData = {completeRideData} setCompleteRideData={setCompleteRideData} fare =  {fare}/>}
-    </>
-  );
+      <div className="h-full w-full relative dark:text-white dark:bg-slate-900">
+        {/* Navbar */}
+         <Navbar/>
+        <div className="flex h-full md:h-full  md:flex-row flex-col-reverse md:items-start items-center justify-center gap-5">
+         {/* Captain Details */}
+          <div className="flex items-center justify-center min-w-[320px] w-[30%] dark:text-black flex-col  px-5 py-5 md:w-[30%]">
+            {captain && <CaptainDetails logoutHandler={logoutHandler} />} 
+          </div>
+
+        {/* Map */}
+        <div className="flex md:items-start items-center justify-center w-full md:w-[90%] md:h-[90vh] h-[40vh]">
+         {captainCoordinates && <LiveTracking vehicleType={captain?.vehicle?.vehicleType} captainCoordinates={captainCoordinates} />}
+        </div>
+
+        
+        {RideAvailablePanel  &&
+            <Draggable disabled={window.innerWidth < 768}>
+            <div className="absolute dark:text-black flex items-center justify-center w-full max-w-[450px]  md:max-w-[500px] px-3 rounded-xl  md:w-[40%] max-h-[50%] z-[1000]">
+                      <RideAvailable data={data} setData={setData} handleConfirmRide = {handleConfirmRide} setRideAvailablePanel={setRideAvailablePanel}/>
+                    </div>
+            </Draggable>
+
+        }
+
+        {completeRideData &&
+          <Draggable disabled={window.innerWidth < 768}>
+            <div className="absolute top-0 h-full  dark:text-black flex items-center justify-center w-full max-w-[450px]  md:max-w-[500px] px-3 rounded-xl  md:w-[40%] max-h-[50%] z-[1000]">
+              <CompleteRidewithOtp completeRideData = {completeRideData} setCompleteRideData={setCompleteRideData} fare =  {fare}/>
+              </div>
+           </Draggable>
+           }
+
+        </div>
+
+      </div>
+  )
+
+  // return (
+  //   <>
+  //     {captain && <CaptainDetails captain={captain} logoutHandler={logoutHandler} captainCoordinates = {captainCoordinates} userCoordinates={userCoordinates}  />}
+  //     {data && <RideAvailable data={data}  setData={setData} handleConfirmRide = {handleConfirmRide}   />}
+  //     {completeRideData && <CompleteRidewithOtp completeRideData = {completeRideData} setCompleteRideData={setCompleteRideData} fare =  {fare}/>}
+  //   </>
+  // );
 };
 
 export default CaptainHome;

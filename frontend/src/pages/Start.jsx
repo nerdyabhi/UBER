@@ -30,13 +30,13 @@ const Start = () => {
   }, [userCoordinates]);
 
   return (
-    <div className="h-[100vh] bg-gray-50 max-w-[100%] w-[95%] relative mx-5">
-      <div className="absolute inset-0 -z-10 "></div>
+    <div className="h-[100vh] bg-gray-50 dark:text-white dark:bg-slate-900 max-w-[100%]  relative w-full">
+      <div className="absolute inset-0 -z-10 shadow-sm dark:shadow-blue-200"></div>
       {/* Navbar */}
       <Navbar />
       <div className="flex flex-col md:flex-row items-center justify-center min-h-[80vh]">
         {/* Left Div */}
-        <div className="w-full md:w-[40vw] flex flex-col gap-5 border-2 m-2 py-10 items-center justify-center">
+        <div className="w-full md:w-[40vw] flex flex-col gap-5 border-1 border-slate-300 bg-gray-50 dark:bg-slate-900 m-2 py-10 items-center justify-center">
           {/* Heading */}
           <h1 className="font-bold text-4xl text-center">Go anywhere with <span className="font-sans">Uber</span></h1>
           <Form setDestinationCoordinates={setDestinationCoordinates} setPickupCoordinates={setPickupCoordinates} />
@@ -55,6 +55,7 @@ const Start = () => {
         {/* Map */}
         <div className="relative w-full md:w-[50vw] h-[80vh] md:h-[70vh] p-10">
           {userCoordinates && <LiveTracking />}
+          
         </div>
       </div>
     </div>

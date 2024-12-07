@@ -1,10 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
 import { API_URL } from "../utils/constants";
+import { useRecoilState } from "recoil";
+import { destinationCoordinatesAtom } from "../store/atom/CoordinatesContext";
 
 export default function CompleteRideWithOtp({ completeRideData, fare, onComplete , setCompleteRideData }) {
     const [otp, setOtp] = useState('');
     const [error, setError] = useState(null);
+    const [destinationCoordinates , setDestinationCoordinates] = useRecoilState(destinationCoordinatesAtom)
 
     const handleChange = (value) => {
         if (isNaN(value)) return;
@@ -23,6 +26,8 @@ export default function CompleteRideWithOtp({ completeRideData, fare, onComplete
                 });
 
                 console.log(response);
+                setDestinationCoordinates(response?.data?.destinationCoordinates)
+
                 setCompleteRideData(null);
                 
             } catch (error) {
@@ -36,9 +41,9 @@ export default function CompleteRideWithOtp({ completeRideData, fare, onComplete
     };
 
     return (
-        <div className="md:w-[40%] w-full z-10 absolute bottom-0 bg-white py-12 px-8 rounded-t-3xl shadow-2xl">
+        <div className=" w-full z-10 absolute bottom-0 bg-white py-12 px-8 rounded-t-3xl shadow-2xl">
             <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-800">Complete Your Ride</h2>
+                <h2 className="text-3xl font-bold text-gray-800">Start Your Ride</h2>
                 <p className="text-gray-600 mt-2">Enter the 6-digit OTP shared with passenger</p>
             </div>
 
@@ -70,7 +75,7 @@ export default function CompleteRideWithOtp({ completeRideData, fare, onComplete
                 onClick={handleSubmit}
                 className="w-full bg-black text-white py-5 rounded-xl font-semibold text-lg hover:bg-gray-800 transition-colors shadow-md"
             >
-                Complete Ride
+                Start Ride
             </button>
         </div>
     );
