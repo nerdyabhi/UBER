@@ -1,34 +1,37 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userContextAtom } from "../store/atom/UserContext";
 import axios from "axios";
 import { API_URL } from "../utils/constants";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import LocationSearchPanel from "../components/LocationSearchPanel";
-import RideComponent from "../components/RideComponent";
+import RideComponent from "../components/RideComponent"
 import ConfirmedVehicle from "../components/confirmedVehicle";
 import WaitingForDriver from "../components/WaitingForDriver";
 import useAutoComplete from "../hooks/useAutoComplete";
 import { SocketContext } from "../store/atom/SocketContext";
 import OngoingRide from "../components/OngoingRide";
 import LiveTracking from "../components/LiveTracking";
+import Navbar from "../components/Navbar";
+import Form from "../components/Form";
+import { destinationAtom, destinationCoordinatesAtom, pickupAtom, pickupCoordinatesAtom } from "../store/atom/CoordinatesContext";
+import Draggable from 'react-draggable';
 
 const Home = ()=>{
     const user = useRecoilValue(userContextAtom);
-    const [pickup , setPickup ] = useState("");
     // const [locations , setLocations] = useState(null);
-    const [destination , setDestination ] = useState("");
+    const [destination , setDestination ] = useRecoilState(destinationAtom);
     const [panelOpen , setPanelOpen] = useState(false);
-    const [vehiclePanelOpen , setVehiclePanelOpen] = useState(false);
+    const [vehiclePanelOpen , setVehiclePanelOpen] = useState(true);
     const [confirmedVehiclePanel , setConfirmedVehiclePanel] = useState(false);
     const [WaitingForDriverPanel , setWaitingForDriverPanel] = useState(false);
     const [fares , setFares] = useState(null);
     const [vehicleType , setVehicleType] = useState(null);
     const [rideData , setRideData] = useState(null);
     const [confirmedRideData , setConfirmedRideData] = useState(null);
-    const [activeField , setActiveField] = useState(null);
-    const [pickupCoordinates , setPickupCoordinates] = useState(null);
-    const [destinationCoordinates , setDestinationCoordinates] = useState(null);
+    const [pickupCoordinates , setPickupCoordinates] = useRecoilState(pickupCoordinatesAtom);
+    const [pickup , setPickup] = useRecoilState(pickupAtom);
+    const [destinationCoordinates , setDestinationCoordinates] = useRecoilState(destinationCoordinatesAtom);
     const[rideStarted , setRidestarted] = useState(null);
 
     const token = localStorage.getItem('token');
@@ -99,10 +102,9 @@ const Home = ()=>{
             console.log("Got an error ", data);
         };
 
-        socket.on('ride-accepted', handleRideAccepted);
-        socket.on('error', handleError); 
-        socket.on('ride-started' ,async(data)=>{
-            console.log("Ride Got started --burahhhh");
+        socket?.on('ride-accepted', handleRideAccepted);
+        socket?.on('error', handleError); 
+        socket?.on('ride-started' ,async(data)=>{
             
             setPanelOpen(false);
             setVehiclePanelOpen(false);
@@ -116,91 +118,48 @@ const Home = ()=>{
     }, [socket])
 
 
-    /*@ Toggle between locations to save api referes */
-    const locations = useAutoComplete(panelOpen ? (document.activeElement?.placeholder?.includes('pickup') ? pickup : destination) : pickup, token);
-    // const locations = [];
-
-    if(!user) return <h1> Please Login to continue</h1>
 
     return(
-        <>
-      <div className="flex flex-col max-w-[100vw] h-[100vh] w-[100vw]  transition-all duration-200">
-        <div className="flex w-[100vw] h-[90vh]  absolute top-0 z-10">
-            {pickupCoordinates && < LiveTracking userCoordinates={pickupCoordinates}  captainCoordinates={destinationCoordinates}/>}
+       <div className="h-[100vh] w-full relative dark:text-white dark:bg-slate-900">
+          <Navbar/>
 
-        </div>
-        <div className="logo absolute top-4 left-4">
-            <img src="/uber-logo.png" alt="Uber" className="h-8" />
-        </div>
-
-       <div className="flex flex-col h-[100%] justify-end absolute top-0 w-[100vw] max-w-[100vw]">
-          
-            <div className={`menu-box ${panelOpen ? 'h-[100%] justify-start' : 'h-[35%]'} transition-all duration-300 ease-in-out shadow-2xl w-[100%] py-8 flex-col flex items-center z-10 bg-white/95 backdrop-blur-sm rounded-t-3xl relative`}>
-                       { panelOpen && <button onClick={()=>setPanelOpen(false)} className="absolute right-6 top-6 text-gray-600 hover:text-black transition-colors">
-                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                           </svg>
-                       </button>}
-                    <h1 className="font-bold text-2xl mb-4 text-gray-900">Where to?</h1>
-                    <form onSubmit={findTripHandler} className="flex flex-col space-y-4 w-full max-w-md px-6">
-                        <input 
-                            type="text" 
-                            placeholder="Enter pickup location"
-                            className="px-4 py-3 rounded-xl bg-gray-100 border-none focus:outline-none focus:ring-2 focus:ring-black/20 transition-all"
-                            value={pickup}
-                            onChange={(e)=>setPickup(e.target.value)}
-                            onClick={()=>{
-                                setPanelOpen(true);
-                                console.log("pickup");
-                                setActiveField('pickup');
-                            }}
-                        />
-                        <input 
-                            type="text" 
-                            placeholder="Enter destination"
-                            className="px-4 py-3 rounded-xl bg-gray-100 border-none focus:outline-none focus:ring-2 focus:ring-black/20 transition-all"
-                            value={destination}
-                            onChange={(e)=>setDestination(e.target.value)}
-                            onClick={()=>{
-                                setActiveField('destination');
-                                setPanelOpen(true);
-                            }}
-                        />
-
-                        {panelOpen && 
-                            <button  type="submit" className="bg-black text-white py-3 rounded-xl hover:bg-gray-900 transition-colors">
-                                Find Trip
-                            </button>
-                        }
-                    </form>
-
-                    <div className="flex max-w-md items-center justify-center mt-4" >
-                        {panelOpen && locations && <LocationSearchPanel locations={locations}  setPickup={setPickup} setDestination={setDestination} activeField={activeField} />}
-                    </div>
-                </div>
-       </div>
-
-       {vehiclePanelOpen && fares && <div className="absolute px-6 py-6 w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl shadow-2xl">
-            <h1 className="font-bold py-2 text-2xl text-gray-900">Choose a ride</h1>
-            <div className="flex flex-col gap-4 justify-center items-center overflow-y-auto h-[calc(100%-4rem)]">
-                    <RideComponent setVehiclePanelOpen={setVehiclePanelOpen} setConfirmedVehiclePanel={setConfirmedVehiclePanel} fares={fares} setVehicleType={setVehicleType} />
+          <div className="flex w-full h-[100vh] flex-col md:flex-row items-start justify-center gap-5">
+            <div className="md:w-[30%] w-full  flex flex-col items-center justify-center">
+                <h1 className="font-bold text-2xl dark:text-white text-center p-4">Book a Sasta Uber For You.</h1>
+              <Form/>
+              <button onClick={findTripHandler} className="bg-black w-[350px] items-center text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition"> Find Trip </button>
             </div>
-        </div>}
+            
+            <div className="flex  items-start w-full md:w-[90%] h-[90vh] ">
+                <LiveTracking />
+            </div>
 
-       {confirmedVehiclePanel && fares&& <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
-            <ConfirmedVehicle rideData={rideData} setRideData={setRideData}  fares={fares} pickup={pickup} destination={destination} vehicleType={vehicleType} setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} setPickupCoordinates={setPickupCoordinates} setDestinationCoordinates={setDestinationCoordinates} />
-        </div>}
+            {vehiclePanelOpen && fares && (
+              <Draggable disabled={window.innerWidth <768}>
+                <div className="absolute px-6 py-6 cursor-pointer md:max-w-[50%] max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
+                  <RideComponent setVehiclePanelOpen={setVehiclePanelOpen} setConfirmedVehiclePanel={setConfirmedVehiclePanel} fares={fares} setVehicleType={setVehicleType} />
+                </div>
+              </Draggable>
+            )}
 
-       {WaitingForDriverPanel && <div className="absolute p-6 shadow-2xl flex items-center justify-center w-[100vw] h-[60%] bg-white/95 backdrop-blur-sm bottom-0 z-10 rounded-t-3xl">
-            <WaitingForDriver setWaitingForDriverPanel={setWaitingForDriverPanel}/>
-        </div>}
+            {confirmedVehiclePanel && fares && (
+              <Draggable disabled={window.innerWidth < 768}>
+                <div className="absolute cursor-pointer px-6 w-full max-w-[450px] py-6 max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
+                  <ConfirmedVehicle setVehiclePanelOpen={setVehiclePanelOpen} rideData={rideData} setRideData={setRideData} fares={fares} pickup={pickup} destination={destination} vehicleType={vehicleType} setConfirmedVehiclePanel={setConfirmedVehiclePanel} setWaitingForDriverPanel={setWaitingForDriverPanel} setPickupCoordinates={setPickupCoordinates} setDestinationCoordinates={setDestinationCoordinates} />
+                </div>
+              </Draggable>
+            )}
 
-        {/* {rideData && } */}
+        { confirmedRideData &&
+            <Draggable disabled={window.innerWidth < 768}>
+                <div className="absolute  cursor-pointer  items-center justify-center  md:min-w-[450px] py-6 md:max-w-[50%] max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
+                    <OngoingRide rideData={rideData} confirmedRideData={confirmedRideData}/>
+                </div>
+            </Draggable>
+        }
 
-        {confirmedRideData && <OngoingRide rideData={rideData} confirmedRideData={confirmedRideData}/>}
-        
-      </div>
-      </>
+          </div>
+       </div>
     )
 }
 

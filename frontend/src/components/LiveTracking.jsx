@@ -1,20 +1,29 @@
 // LiveTracking.jsx
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import "leaflet-routing-machine";
+import { userCoordinatesAtom , pickupAtom, pickupCoordinatesAtom , destinationAtom , destinationCoordinatesAtom } from '../store/atom/CoordinatesContext';
+import { useRecoilState } from 'recoil';
+
 
 
 // Fix for default marker icons
 
-const LiveTracking = ({userCoordinates, pickupCoordinates, destinationCoordinates}) => {
+const LiveTracking = () => {
+    const [pickupCoordinates , setPickupCoordinates] = useRecoilState(pickupCoordinatesAtom);
+    const [userCoordinates , setUserCoordinates] = useRecoilState(userCoordinatesAtom);
+    const [pickup , setPickup] = useRecoilState(pickupAtom);
+    const [destination , setDestination] = useRecoilState(destinationAtom);
+
+    const [destinationCoordinates , setDestinationCoordinates] = useRecoilState(destinationCoordinatesAtom);
     const defaultCoordinates = userCoordinates ||  { ltd: 28.7041, lng: 77.1025 }; // Delhi coordinates
 
         console.log(pickupCoordinates , destinationCoordinates);
         
     // If No Coordinates , show default map
-    if(!pickupCoordinates || !destinationCoordinates){
+    if(!pickupCoordinates && !destinationCoordinates){
         return (
             <div className=" top-5 z-100  h-[100%] w-[100%]">
                 <MapContainer
@@ -81,7 +90,7 @@ const LiveTracking = ({userCoordinates, pickupCoordinates, destinationCoordinate
 }
 
     
-const PopupMarker = ({ position, icon }) => {
+const PopupMarker = ({ position, icon , location }) => {
     const markerRef = useRef(null);
 
     useEffect(() => {
@@ -92,10 +101,9 @@ const PopupMarker = ({ position, icon }) => {
 
     return (
         <Marker ref={markerRef} position={position} icon={icon}>
-            <Popup>
-                <div>
-                    <h3 style={{ margin: 0 }}>Title</h3>
-                    <p style={{ margin: 0, fontSize: "12px" }}>Content aayega yahan.</p>
+            <Popup closeOnClick={false} closeButton={false} autoClose={false}>
+                <div className='h-10px font-bold font-xl bg-opacity-0'>
+                    <h3 style={{ margin: 0 }}>{location}</h3>
                 </div>
             </Popup>
         </Marker>
@@ -111,7 +119,7 @@ const PopupMarker = ({ position, icon }) => {
         <div style="width: 5px; height: 5px;  background-color: white; border-radius: 100%;"></div>
       </div>
     `,
-    iconSize: [0, 0],
+    iconSize: [10, 10],
     iconAnchor: [15, 15],
     popupAnchor: [0, -15],
   });
@@ -136,29 +144,24 @@ const PopupMarker = ({ position, icon }) => {
     // Ab agar , Pickup and destination dono hai toh..
     return (
         <div className=" top-5 z-100  h-[100%] w-[100%]">
-            <MapContainer
+        <MapContainer
       center={[pickupCoordinates.ltd, pickupCoordinates.lng]}
       zoom={13}
       style={{ height: "100vh", width: "100%" }}
     >
-       <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+       <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
 
-      <ZoomToLocations />
       <RoutingMachine />
 
     {/* Pickup Marker */}
-    <PopupMarker position={[pickupCoordinates.ltd, pickupCoordinates.lng]} icon={pickupIcon} />
+ 
+    {pickupCoordinates && <PopupMarker position={[pickupCoordinates.ltd, pickupCoordinates.lng]} icon={pickupIcon} location={pickup} />}
 
-    {/* Destination Marker */}
-      <Marker
-        position={[destinationCoordinates.ltd, destinationCoordinates.lng]}
-        icon={destinationIcon}
-      >
-        <Popup>Destination Location</Popup>
-      </Marker>
+    {destinationCoordinates && <PopupMarker position={[destinationCoordinates.ltd, destinationCoordinates.lng]} icon={destinationIcon} location={destination} />}
+
+    <ZoomToLocations />
     </MapContainer>
         </div>
     );

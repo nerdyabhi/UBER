@@ -1,25 +1,27 @@
 import React from 'react';
 import { CAR_IMG, MOTO_IMG, AUTO_IMG } from '../utils/constants';
 
-export default function OngoingRide({rideData ,  confirmedRideData }) {
+export default function OngoingRide({rideData, confirmedRideData}) {
     const { captain } = confirmedRideData;
     const vehicleType = captain?.vehicle?.vehicleType || 'car';
     const img = vehicleType === "car" ? CAR_IMG : vehicleType === "motorcycle" ? MOTO_IMG : AUTO_IMG;
 
-    // Generate a random 4-digit OTP (in real app, this should come from backend)
     const otp = rideData.otp;
 
     return (
-        <div className="md:w-[35%] w-full bg-white p-4 rounded-lg shadow-lg absolute bottom-0 z-10">
+        <div className="fixed bottom-0 max-w-[450px] left-0 right-0 z-10 p-4 bg-gray-100 rounded-t-lg shadow-lg">
+            <div className="flex justify-end mb-2">
+                <i className="cursor-pointer text-gray-500 hover:text-gray-700 fas fa-times"></i>
+            </div>
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold">Your ride is on the way</h2>
-                <div className="bg-gray-100 px-3 py-1 rounded">
+                <h2 className="text-xl font-bold text-gray-900">Your ride is on the way</h2>
+                <div className="px-3 py-1 bg-gray-100 rounded">
                     <span className="text-sm font-medium">OTP: </span>
                     <span className="text-lg font-bold">{otp}</span>
                 </div>
             </div>
 
-            <div className="flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-4 p-4 mb-4 bg-gray-50 rounded-lg">
                 <img src={img} alt={vehicleType} className="w-16 h-16 object-contain" />
                 <div>
                     <h3 className="text-base font-semibold capitalize">{vehicleType}</h3>
@@ -27,30 +29,38 @@ export default function OngoingRide({rideData ,  confirmedRideData }) {
                 </div>
             </div>
 
-            <div className="space-y-3">
-                <div className="border-b pb-2">
+            <div className="space-y-4">
+                <div className="pb-3 border-b border-gray-200">
                     <h3 className="text-sm font-medium text-gray-500">Captain</h3>
-                    <p className="text-base font-medium">
+                    <p className="text-base font-medium text-gray-900">
                         {captain.name.firstName} {captain.name.lastName}
                     </p>
                 </div>
 
                 <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">Vehicle Details</h3>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
+                    <h3 className="mb-2 text-sm font-medium text-gray-500">Vehicle Details</h3>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
                             <span className="text-gray-500">Type: </span>
-                            <span className="font-medium capitalize">{vehicleType}</span>
+                            <span className="font-medium capitalize text-gray-900">{vehicleType}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Color: </span>
-                            <span className="font-medium">{captain.vehicle.color}</span>
+                            <span className="font-medium text-gray-900">{captain.vehicle.color}</span>
                         </div>
                         <div className="col-span-2">
                             <span className="text-gray-500">Plate: </span>
-                            <span className="font-medium">{captain.vehicle.plate}</span>
+                            <span className="font-medium text-gray-900">{captain.vehicle.plate}</span>
                         </div>
                     </div>
+                    <button 
+                        className="w-full py-4 mt-6 text-white bg-black rounded-lg font-semibold hover:bg-gray-900 transition-colors"
+                        onClick={() => {
+                            console.log("Processing payment...");
+                        }}
+                    >
+                        Make Payment
+                    </button>
                 </div>
             </div>
         </div>

@@ -26,7 +26,7 @@ const getFare= async(pickup, destination) =>{
         };
         return {fares , distanceInKm  };
     }
-   return res.status(400).json({message:"Please send valid details"});
+   return null;
 }
 
 const getOTP = (num)=>{

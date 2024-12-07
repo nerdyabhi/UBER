@@ -12,9 +12,13 @@ export const destinationAtom = atom({
 
 export const pickupCoordinatesAtom = atom({
     default:null,
-    key:"pickuCoordinatesContext"
+    key:"pickupCoordinatesContext"
 })
 export const destinationCoordinatesAtom = atom({
     default:null,
-    key:"pickuCoordinatesContext"
+    key:"destinationCoordinatesContext"
+})
+export const userCoordinatesAtom = atom({
+    default:null,
+    key:"userCoordinatesContext"
 })

@@ -3,7 +3,7 @@ import { API_URL, AUTO_IMG, CAR_IMG, MOTO_IMG } from "../utils/constants";
 import { useState } from "react";
 import SearchingForDriver from "./SearchingForDriver";
 const token = localStorage.getItem('token');
-export default function ConfirmedVehicle({ setRideData , pickup, destination,  fares, vehicleType, setConfirmedVehiclePanel, setWaitingForDriverPanel , setPickupCoordinates , setDestinationCoordinates }) {
+export default function ConfirmedVehicle({setVehiclePanelOpen, setRideData , pickup, destination,  fares, vehicleType, setConfirmedVehiclePanel, setWaitingForDriverPanel , setPickupCoordinates , setDestinationCoordinates }) {
     const img = vehicleType === "Car" ? CAR_IMG : vehicleType === "Motorcycle" ? MOTO_IMG : AUTO_IMG;
     const price = fares?.fares?.fares[vehicleType];
     const distance = fares?.fares?.distanceInKm;
@@ -32,17 +32,19 @@ export default function ConfirmedVehicle({ setRideData , pickup, destination,  f
     const confirmRideHandler = async() => {
         setIswaiting(true);
         await createRide();
-        // setIswaiting(false);
-        // setConfirmedVehiclePanel(false);
-        // setWaitingForDriverPanel(true);
     }
+    
     if (!fares) return <></>;
     if(isWaiting) return <SearchingForDriver setIswaiting = {setIswaiting} />
     return (
-        <div className="md:w-[40%] w-full">
+        <div className=" w-full max-w-[450px]">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold">Your ride details</h2>
-                <button onClick={() => setConfirmedVehiclePanel(false)} className="text-gray-500">
+                <button onClick={() => {
+                        setConfirmedVehiclePanel(false);
+                        setVehiclePanelOpen(true);
+                    }
+                } className="text-gray-500">
                     ✕
                 </button>
             </div>

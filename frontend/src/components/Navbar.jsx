@@ -1,20 +1,27 @@
 import { Link } from 'react-router-dom';
+import useDarkMode from '../hooks/useDarkMode';
 
 const Navbar = () => {
-    return (
-        <div className="bg-white h-14 w-full flex items-center justify-between px-4 mt-2 shadow-md">
-            <div className="flex items-center space-x-4">
+    const {theme, toggleTheme} = useDarkMode();
 
+    return (
+        <div className="bg-white dark:bg-slate-900 dark:text-white h-14 w-full flex items-center justify-between px-4 mt-2 shadow-md z-100">
+            <div className="flex items-center space-x-4">
                 <Link to="/" className="font-semibold font-sans text-xl">Sasta Uber</Link>
             </div>
             <div className="flex items-center space-x-4">
-                <Link to="/login" className="text-gray-700 hover:text-black">Login</Link>
-                <Link to="/signup" className="text-gray-700 hover:text-black">Signup</Link>
-                <Link to="/captain/register" className="text-gray-700 hover:text-black">Become a Captain</Link>
-                <button className="text-gray-700 hover:text-black">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                <Link to="/login" className="text-gray-700 dark:text-white hover:text-black">Login</Link>
+                <Link to="/signup" className="text-gray-700 dark:text-white hover:text-black">Signup</Link>
+                <Link to="/captain/register" className="text-gray-700 dark:text-white hover:text-black">Become a Captain</Link>
+                <button className="text-gray-700 dark:text-white hover:text-black">
+                    <i className="fas fa-user text-xl"></i>
+                </button>
+                <button onClick={toggleTheme} className="text-gray-700 hover:text-black ml-2">
+                    {theme === 'dark' ? (
+                        <i className="fas fa-sun text-xl"></i>
+                    ) : (
+                        <i className="fas fa-moon text-xl"></i>
+                    )}
                 </button>
             </div>
         </div>

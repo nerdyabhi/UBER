@@ -1,17 +1,25 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useDebounce from "../hooks/useDebouncing";
+import { pickupCoordinatesAtom, userCoordinatesAtom , destinationAtom , pickupAtom, destinationCoordinatesAtom ,  } from "../store/atom/CoordinatesContext";
+import { useRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 
-const Form = ({setDestinationCoordinates , setPickupCoordinates})=>{
+
+const Form = ()=>{
   
     const apiKey = import.meta.env.VITE_HERE_API_KEY;
-    const [pickupSuggestions , setPickupSuggestions] = useState(null);
-    const [destinationSuggestions , setDestinationSuggestions] = useState(null);
+    const [pickupCoordinates , setPickupCoordinates] = useRecoilState(pickupCoordinatesAtom);
+    const [userCoordinates , setUserCoordinates] = useRecoilState(userCoordinatesAtom);
+    const [pickup , setPickup] = useRecoilState(pickupAtom);
+    const [destination , setDestination] = useRecoilState(destinationAtom);
+    const [destinationCoordinates , setDestinationCoordinates] = useRecoilState(destinationCoordinatesAtom);
     const [pickupPanel , setPickupPanel] = useState(false);
     const [destinationPanel , setDestinationPanel] = useState(false);
-    const [pickup , setPickup] = useState();
-    const [destination , setDestination] = useState();
-    
+
+    const [pickupSuggestions  , setPickupSuggestions] = useState(null);
+    const [destinationSuggestions , setDestinationSuggestions] = useState(null);
+    const navigate = useNavigate();
 
     const getLocations = async(location)=>{
       const url= `https://autosuggest.search.hereapi.com/v1/autosuggest?q=${location}&at=0.0,0.0&apiKey=${apiKey}&limit=10`;
@@ -40,7 +48,7 @@ const Form = ({setDestinationCoordinates , setPickupCoordinates})=>{
     }
 
     return (
-      <div className="flex items-center justify-center w-full">
+      <div className="flex  dark:text-black items-center justify-center w-full">
       <form className="flex flex-col gap-4 p-4 w-[400px] ">
         <div className="relative ">
         <input
@@ -55,16 +63,16 @@ const Form = ({setDestinationCoordinates , setPickupCoordinates})=>{
         onChange={(e)=>handleChange(e , "pickup")}
 
         placeholder="Enter pickup location"
-        className="w-full z-5 p-3 pl-8 border bg-gray-100 rounded-lg focus:outline-none focus:border-black"
+        className="w-full  text-black z-5 p-3 pl-8 border bg-gray-100 rounded-lg focus:outline-none focus:border-black"
         />
        {pickupPanel &&  <ul className="bg-white shadow-xl overflow-y-scroll max-h-200px] rounded-lg w-full p-4 absolute mt-1 z-20">
-          {!pickupSuggestions && <h1>No results here</h1>}
+          {!pickupSuggestions && <h1 className="text-center text-gray-400">No results here</h1>}
           {pickupSuggestions &&
             pickupSuggestions.map((ele) => (
               <li key={ele.id} onClick={()=>{
                 setPickup(ele.title)
                 setPickupCoordinates({ltd:ele?.position?.lat , lng:ele?.position?.lng})
-              }} className="p-2 font-thin hover:bg-gray-100 cursor-pointer transition-colors">{ele?.title}</li>
+              }} className="p-2 font-normal hover:bg-gray-100 cursor-pointer transition-colors">{ele?.title}</li>
             )) 
           } 
         
@@ -88,28 +96,23 @@ const Form = ({setDestinationCoordinates , setPickupCoordinates})=>{
         }}
         onChange={(e)=>handleChange(e , "destination")}
         placeholder="Enter destination"
-        className="w-full p-3 pl-8 border z-5 bg-gray-100 rounded-lg focus:outline-none focus:border-black"
+        className="w-full text-black p-3 pl-8 border z-5 bg-gray-100 rounded-lg focus:outline-none focus:border-black"
         />
         {destinationPanel &&  <ul className="bg-white shadow-lg overflow-y-scroll max-h-[200px] rounded-lg w-full p-4 absolute mt-1 z-10">
-          {!destinationSuggestions && <h1>No results here.</h1>}
+          {!destinationSuggestions && <h1 className="text-center text-gray-400">No results here.</h1>}
           {destinationSuggestions && 
             destinationSuggestions.map((ele) => (
               
               <li key={ele.id} onClick={()=>{
                 setDestination(ele.title);
                 setDestinationCoordinates({ltd:ele.position.lat , lng:ele?.position?.lng})
-              }} className="p-2 font-thin font-mono hover:bg-gray-100 cursor-pointer transition-colors">{ele?.title}</li>
+              }} className="p-2 font-thin text-black font-mono hover:bg-gray-100 cursor-pointer transition-colors">{ele?.title}</li>
             ))
           }
         </ul>}
         </div>
 
-        <button
-        type="submit"
-        className="bg-black text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition"
-        >
-        Find a ride
-        </button>
+       
         </form>
        </div>
     )

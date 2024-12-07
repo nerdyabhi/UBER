@@ -8,17 +8,20 @@ import { API_URL } from "../utils/constants";
 const HomePageGuard = ({children}) => {
     const Navigate = useNavigate();
     const token = localStorage.getItem('token');
+    
     const [user, setUser] = useRecoilState(userContextAtom);
 
     useEffect(() => {
         if (!token) {
-            Navigate('/login');
+            // Navigate('/login');
+            return <h1>No token present</h1>
         }
     }, [token, Navigate]);
 
     useEffect(() => {
         if(!token && !user){
-            Navigate('/login');
+            return <h1>No token present</h1>
+            // Navigate('/login');
         }
     }, [token, user, Navigate]);
 
@@ -43,11 +46,13 @@ const HomePageGuard = ({children}) => {
         };
 
         getProfile();
-    }, [token, Navigate]);
+    }, [token]);
 
     useEffect(() => {
         if(!user) {
-            Navigate('/login');
+            console.log("No user is present! ");
+            
+            // Navigate('/login');
         }
     }, [user, Navigate]);
 

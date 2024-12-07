@@ -20,13 +20,17 @@ const CaptainHomeGuard = ({children}) => {
                 authorization: `Bearer ${token}`
             }
         }).then(response => {
-            if(response.status === 200) {
+            console.log("Response is " , response);
+            
+            if(response.data.captain) {
                 console.log("succesfully , Saved the captain");
                 setCaptain(response.data.captain);
             } else {
                 Navigate('/captain/login');
             }
         }).catch(() => {
+            console.log("Error sigining in.");
+            
             Navigate('/captain/login');
         });
     }, [token]);

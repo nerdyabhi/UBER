@@ -1,6 +1,6 @@
 export default function SearchingForDriver({ setIswaiting}) {
     return (
-        <div className="md:w-[40%] w-full">
+        <div className=" w-full max-w-[450px]">
             <div className="mb-8 text-center">
                 <h2 className="text-2xl font-bold mb-2">Finding your driver</h2>
                 <p className="text-gray-600">We're matching you with a nearby driver</p>
