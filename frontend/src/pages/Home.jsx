@@ -62,7 +62,9 @@ const Home = ()=>{
             
             const response = await axios.post(API_URL+'/rides/getFare' , {pickupCoordinates , destinationCoordinates} , {
                 headers:{
-                    Authorization:`Bearer ${token}`
+                    Authorization:`Bearer ${token}`,
+                    // 'Access-Control-Allow-Origin': '*',
+                    // 'Content-Type': 'application/json'
                 }
             })
             
