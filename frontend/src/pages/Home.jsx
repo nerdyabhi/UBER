@@ -16,6 +16,10 @@ import Navbar from "../components/Navbar";
 import Form from "../components/Form";
 import { destinationAtom, destinationCoordinatesAtom, pickupAtom, pickupCoordinatesAtom } from "../store/atom/CoordinatesContext";
 import Draggable from 'react-draggable';
+import { ToastContainer  , toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import ChatComponent from "../components/ChatComponent";
+import Footer from "../components/footer";
 
 const Home = ()=>{
     const user = useRecoilValue(userContextAtom);
@@ -34,7 +38,7 @@ const Home = ()=>{
     const [destinationCoordinates , setDestinationCoordinates] = useRecoilState(destinationCoordinatesAtom);
     const [captainCoordinates , setCaptainCoordinates ] = useState(null);
     const[rideStarted , setRidestarted] = useState(null);
-
+    
     const token = localStorage.getItem('token');
     const socket = useContext(SocketContext);
     const submitHandler = (e)=>{
@@ -43,22 +47,37 @@ const Home = ()=>{
     }
     
     const findTripHandler = async(e)=>{
+
         e.preventDefault();
+        if(!pickupCoordinates || !destinationCoordinates){
+            toast.error("Please enter valid location");
+            return;
+        }
+        console.log(pickupCoordinates , destinationCoordinates);
         setVehiclePanelOpen(true)
         setPanelOpen(false);
         /*Get Fare */
 
         try {
-            const response = await axios.post(API_URL+'/rides/getFare' , {pickup , destination} , {
+            
+            const response = await axios.post(API_URL+'/rides/getFare' , {pickupCoordinates , destinationCoordinates} , {
                 headers:{
                     Authorization:`Bearer ${token}`
                 }
             })
-            console.log(response.data);
             
-            setFares(response.data);
+            
+            if(response.status == 200){
+                console.log("Got this fares " , response.data);
+                setFares(response.data);
+            }
+
+            else{
+                toast.error(response?.data?.message || "failed to get a ride.");
+            }
+            
         } catch (error) {
-            console.log("failed to get fare" , error);
+            toast.error(`${error?.response?.data?.message}`);
         }
 
         /*Clear Menu*/
@@ -108,13 +127,13 @@ const Home = ()=>{
         socket?.on('ride-accepted', handleRideAccepted);
         socket?.on('error', handleError); 
         socket?.on('ride-started' ,async(data)=>{
-            
+            console.log(data);
             setPanelOpen(false);
             setVehiclePanelOpen(false);
             setConfirmedVehiclePanel(false);
             setWaitingForDriverPanel(false);
-            setPickupCoordinates(data?.pickupCoordinates);
-            setDestination(data?.destinationCoordinates);
+            // setPickupCoordinates(data?.pickupCoordinates);
+            // setDestination(data?.destinationCoordinates);
             console.log(rideData);
             
             // setConfirmedRideData(null);
@@ -138,7 +157,7 @@ const Home = ()=>{
             </div>
             
             <div className="flex  items-start w-full md:w-[90%] h-[90vh] ">
-                <LiveTracking captainCoordinates={captainCoordinates} />
+                <LiveTracking captainCoordinates={captainCoordinates} captainLocationName = {"Captain Location"} vehicleType={vehicleType} />
             </div>
 
             {vehiclePanelOpen && fares && (
@@ -159,14 +178,33 @@ const Home = ()=>{
 
         { confirmedRideData &&
             <Draggable disabled={window.innerWidth < 768}>
-                <div className="absolute  cursor-pointer  items-center justify-center  md:min-w-[450px] py-6 md:max-w-[50%] max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
+                <div className="absolute  cursor-pointer  items-center justify-center w-full  md:min-w-[450px] py-6 md:max-w-[450px] max-h-[60%] flex flex-col gap-5 bg-white/95 backdrop-blur-sm bottom-10 z-[1000] rounded-t-3xl shadow-2xl">
                     <OngoingRide rideData={rideData} confirmedRideData={confirmedRideData} setConfirmedRideData={setConfirmedRideData}/>
-                </div>
+            </div>
             </Draggable>
         }
 
+        
+         
+
+         <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition: Bounce 
+        stacked />
+
           </div>
+          {/* <Footer/> */}
        </div>
+
     )
 }
 

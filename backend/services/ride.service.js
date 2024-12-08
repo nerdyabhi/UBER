@@ -14,11 +14,10 @@ function calculateFare(distanceInKm, vehicleType = 'Car') {
     return Math.round(baseFares[vehicleType] + (farePerKm * distanceInKm));
 }
 
-const getFare= async(pickup, destination) =>{
-    const distanceData = await mapService.getDistanceAndTime(destination, pickup);
-
-    if (distanceData && distanceData.data.status === "OK") {
-        const distanceInKm = distanceData.data.distance.value / 1000;
+const getFare= async(pickupCoordinates, destinationCoordinates) =>{
+    const distance = await mapService.getDistanceAndTime(destinationCoordinates, pickupCoordinates);
+    if (distance ) {
+        const distanceInKm = distance / 1000;
         const fares = {
             Motorcycle: calculateFare(distanceInKm, 'Motorcycle'),
             Auto: calculateFare(distanceInKm, 'Auto'),
@@ -41,7 +40,7 @@ const createRide = async({user , pickup , destination , vehicleType , pickupCoor
     }
 
     
-        const {fares , distanceInKm} = await getFare(pickup , destination);
+        const {fares , distanceInKm} = await getFare(pickupCoordinates , destinationCoordinates);
         const otp = getOTP(6);
         const ride = await rideModel.create({
             user,
@@ -51,12 +50,12 @@ const createRide = async({user , pickup , destination , vehicleType , pickupCoor
             distance: distanceInKm * 1000,
             otp: otp,
             pickupCoordinates: {
-            ltd: pickupCoordinates.lat,
+            ltd: pickupCoordinates.ltd,
             lng: pickupCoordinates.lng
             },
             destinationCoordinates:{
             
-                ltd: destinationCoordinates.lat,
+                ltd: destinationCoordinates.ltd,
                 lng: destinationCoordinates.lng
             }
         });

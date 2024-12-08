@@ -13,8 +13,16 @@ const userModel = require('../models/user.model');
 /*@SCHEMA'S for the request */
 
 const createRideSchema = z.object({
-    pickup: z.string().min(1, { message: "Pickup location is required" }),
-    destination: z.string().min(1, { message: "Destination is required" }),
+    pickup: z.string().nonempty({ message: "Pickup location is required" }),
+    destination: z.string().nonempty({ message: "Destination location is required" }),
+    pickupCoordinates: z.object({
+        ltd: z.number().min(-90).max(90, { message: "Invalid latitude for pickup" }),
+        lng: z.number().min(-180).max(180, { message: "Invalid longitude for pickup" })
+    }),
+    destinationCoordinates: z.object({
+        ltd: z.number().min(-90).max(90, { message: "Invalid latitude for destination" }),
+        lng: z.number().min(-180).max(180, { message: "Invalid longitude for destination" })
+    }),
     vehicleType: z.enum(['Motorcycle', 'Auto', 'Car'], {
         message: "Vehicle type must be either Motorcycle, Auto, or Car"
     })
@@ -28,8 +36,14 @@ const startRideSchema = z.object({
 });
 
 const getFareSchema = z.object({
-    pickup: z.string().min(1, { message: "Pickup location is required" }),
-    destination: z.string().min(1, { message: "Destination is required" }),
+    pickupCoordinates: z.object({
+        ltd: z.number().min(-90).max(90, { message: "Invalid latitude for pickup" }),
+        lng: z.number().min(-180).max(180, { message: "Invalid longitude for pickup" })
+    }),
+    destinationCoordinates: z.object({
+        ltd: z.number().min(-90).max(90, { message: "Invalid latitude for destination" }),
+        lng: z.number().min(-180).max(180, { message: "Invalid longitude for destination" })
+    })
 })
 
 const confirmRideSchema = z.object({
@@ -55,29 +69,30 @@ router.post('/create' ,authUser,  async(req , res)=>{
     if(!req.user){
         return res.status(400).json({error:"User Not Found"})
     }
+    console.log(validation.data);
+    
 
-   const {pickup , destination , vehicleType} = validation.data;
+   const {pickupCoordinates , destinationCoordinates, pickup , destination , vehicleType , fares} = validation.data;
     
     try {
-        const pickupCoordinates = await getAddressCoordinate(pickup);
-        const destinationCoordinates = await getAddressCoordinate(destination);
         const ride = await createRide({
             user: req.user._id,
             pickup,
             destination,
             vehicleType,
             pickupCoordinates,
-            destinationCoordinates
+            destinationCoordinates,
+            fares,
         });
-
-        console.log(pickupCoordinates , destinationCoordinates);
+        console.log("Created ride succesfully" ,ride);
+        
         
          res.status(200).json(ride);
 
         /*Sending messages to the captain */
          ride.otp = "";
 
-        const CaptainsNearby = await getCaptainsInTheRadius(pickupCoordinates.lat, pickupCoordinates.lng, 100);
+        const CaptainsNearby = await getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 100);
         CaptainsNearby.forEach(captain => {
             const messageObject = {
                 event: 'ride-requested',
@@ -86,7 +101,7 @@ router.post('/create' ,authUser,  async(req , res)=>{
                     user:req.user
                 }
             };
-            console.log("ride-requested" ,messageObject );
+            console.log(captain.fullName);
             
             sendMessageToSocketId(captain.socketId, messageObject);
             
@@ -98,14 +113,21 @@ router.post('/create' ,authUser,  async(req , res)=>{
 
 })
 
+
+
+
 router.post('/getFare' ,authUser , async(req ,res)=>{
     const validation = getFareSchema.safeParse(req.body);
     if(!validation.success){
-        return res.json({message:"Please Send valid data"});
+        return res.status(400).json({message:"Please Send valid data"});
     }
-    const fares = await getFare(validation.data.pickup ,validation.data.destination);
+    const {fares , distanceInKm} = await getFare(validation.data.pickupCoordinates ,validation.data.destinationCoordinates);
 
-    return res.json({fares});
+    if(!fares){
+        res.status(500).json({message:"Failed to get a ride , skill issue."});
+    }
+
+    return res.status(200).json({fares });
 
 })
 
@@ -115,7 +137,6 @@ router.post('/confirm', authCaptain, async (req, res) => {
         return res.status(400).json("Please send valid RideId and CaptainID");
     }
 
-    console.log("You called to create a ride.");
     
 
     const { rideId, captainId } = validation.data;
@@ -135,11 +156,9 @@ router.post('/confirm', authCaptain, async (req, res) => {
             return res.status(409).json({ message: 'Ride already accepted by another driver' });
         }
 
-        console.log("ride Got accepted by", captain.fullName.firstName);
-
         //** Confirm the ride */
         ride.status = 'accepted';
-        ride.captain = captain._id;
+        ride.captain = captainId;
         await ride.save();
 
         const user = await userModel.findById(ride.user);

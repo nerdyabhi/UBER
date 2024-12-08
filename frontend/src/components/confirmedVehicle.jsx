@@ -2,30 +2,39 @@ import axios from "axios";
 import { API_URL, AUTO_IMG, CAR_IMG, MOTO_IMG } from "../utils/constants";
 import { useState } from "react";
 import SearchingForDriver from "./SearchingForDriver";
+import { destinationCoordinatesAtom, pickupCoordinatesAtom } from "../store/atom/CoordinatesContext";
+import { useRecoilValue } from "recoil";
 const token = localStorage.getItem('token');
+
+import { toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function ConfirmedVehicle({setVehiclePanelOpen, setRideData , pickup, destination,  fares, vehicleType, setConfirmedVehiclePanel, setWaitingForDriverPanel , setPickupCoordinates , setDestinationCoordinates }) {
     const img = vehicleType === "Car" ? CAR_IMG : vehicleType === "Motorcycle" ? MOTO_IMG : AUTO_IMG;
-    const price = fares?.fares?.fares[vehicleType];
+    const price = fares?.fares[vehicleType];
     const distance = fares?.fares?.distanceInKm;
     const[isWaiting , setIswaiting] = useState(false);
+
+    const pickupCoordinates = useRecoilValue(pickupCoordinatesAtom);
+    const destinationCoordinates = useRecoilValue(destinationCoordinatesAtom);
 
     const createRide = async()=>{
         const url = API_URL+'/rides/create';
         try {
-            const response = await axios.post(url , {pickup , destination , vehicleType}, {
+            console.log(pickup , destination);
+            
+            const response = await axios.post(url , {pickupCoordinates , destinationCoordinates ,pickup ,fares ,  destination, vehicleType}, {
                 headers:{
                     authorization:`Bearer ${token}`
                 }
-            })
-            console.log("Created a ride " , response);
-            
+            })            
            setRideData(response.data);
-           setPickupCoordinates(response.data.pickupCoordinates);
-           setDestinationCoordinates(response.data.destinationCoordinates)
             
         } catch (error) {
-            console.log("Failed to create a ride" , error);
+            console.log(error);
             
+            toast.error("Failed to create a ride.")
+            setIswaiting(false);
         }
     }
 

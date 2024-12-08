@@ -12,7 +12,7 @@ import Navbar from "../components/Navbar";
 import LiveTracking from "../components/LiveTracking";
 import { destinationAtom, destinationCoordinatesAtom, pickupAtom, pickupCoordinatesAtom } from "../store/atom/CoordinatesContext";
 import Draggable from "react-draggable";
-
+import { ToastContainer } from "react-toastify";
 
 const CaptainHome = () => {
   const token = localStorage.getItem('token');
@@ -27,6 +27,7 @@ const CaptainHome = () => {
   const [pickup , setPickup] = useRecoilState(pickupAtom);
   const [destination , setDestination] = useRecoilState(destinationAtom);
   const [fare , setFare] = useState(null);
+  
 
   const socket = useContext(SocketContext);
 
@@ -121,11 +122,8 @@ const CaptainHome = () => {
     })
     .then(response => {
       console.log("Ride confirmed: ", response.data);
-      // setPickupCoordinates(pick)
-      setPickupCoordinates(response?.data?.pickupCoordinates)
-      setPickup(response?.data?.pickup);
-      setDestination(response?.data?.destination)
-      setCompleteRideData(response.data);      // setCaptainCoordinates(data?.destinationCoordinates)
+      setCompleteRideData(response?.data);
+      setPickupCoordinates(response?.data?.pickupCoordinates);
       setRideAvailablePanel(false);
     })
     .catch(error => {
@@ -169,6 +167,21 @@ const CaptainHome = () => {
               </div>
            </Draggable>
            }
+
+
+        <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+                transition: Bounce 
+                stacked />
 
         </div>
 

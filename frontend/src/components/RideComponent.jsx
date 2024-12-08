@@ -3,7 +3,7 @@ import { AUTO_IMG, CAR_IMG, MOTO_IMG } from "../utils/constants";
 const RideComponent = ({setVehiclePanelOpen, setConfirmedVehiclePanel, fares, setVehicleType})=>{
 
 
-    const {Auto , Car,Motorcycle} = fares?.fares?.fares;
+    const {Auto , Car,Motorcycle} = fares?.fares;
     const closePanels = ()=>{
         setVehiclePanelOpen(false)
         setConfirmedVehiclePanel(true);

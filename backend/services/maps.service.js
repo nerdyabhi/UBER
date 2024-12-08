@@ -20,16 +20,15 @@ const getAddressCoordinate = async(address)=>{
 
 
 /*@Get distance and time.. */
-const getDistanceAndTime = async(destinations, origins) => {
-    const apiKey = process.env.GOOGLE_MAP_API;
-    const url = `https://maps.gomaps.pro/maps/api/distancematrix/json?destinations=${destinations}&origins=${origins}&key=${apiKey}`
+const getDistanceAndTime = async(destinationCoordinates, pickupCoordinates) => {
+    const apiKey = process.env.HERE_MAP_API;
+    const url = `https://router.hereapi.com/v8/routes?transportMode=car&origin=${pickupCoordinates.ltd},${pickupCoordinates.lng}&destination=${destinationCoordinates.ltd},${destinationCoordinates.lng}&return=summary&apiKey=${apiKey}`
     try {
         const response = await axios.get(url);
-        const data = response?.data?.rows[0]?.elements[0];
-
-       
-
-        return {data };
+        const data = response?.data.routes[0].sections[0].summary;
+        if(!data) return null;
+        return data.length;
+        // { duration: 19347, length: 614976, baseDuration: 19465 }
     } catch (error) {
         console.log("Unable to fetch distance and time", error);
     }

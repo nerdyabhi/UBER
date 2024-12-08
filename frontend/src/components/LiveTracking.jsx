@@ -12,16 +12,16 @@ import { AUTO_IMG, CAR_IMG, MOTO_IMG } from '../utils/constants';
 
 // Fix for default marker icons
 
-const LiveTracking = ({captainCoordinates , vehicleType}) => {
+const LiveTracking = ({captainCoordinates , captainLocationName,  vehicleType}) => {
     const [pickupCoordinates] = useRecoilState(pickupCoordinatesAtom);
     const [userCoordinates] = useRecoilState(userCoordinatesAtom);
     const [pickup] = useRecoilState(pickupAtom);
     const [destination] = useRecoilState(destinationAtom);
     const CaptainIcon = new L.Icon({
       iconUrl: vehicleType === "car" ? CAR_IMG : vehicleType === "auto" ? AUTO_IMG : MOTO_IMG,
-      iconSize: [80, 60], // Adjust the size as needed
-      iconAnchor: [25, 50], // Adjust the anchor as needed
-      popupAnchor: [0, -50], // Adjust the popup anchor as needed
+      iconSize: [50, 50], 
+      iconAnchor: [25, 50], 
+      popupAnchor: [0, -50],
     });
     const [destinationCoordinates] = useRecoilState(destinationCoordinatesAtom);
     let defaultCoordinates = captainCoordinates || userCoordinates ||{ ltd: 28.7041, lng: 77.1025 }; // Delhi coordinates

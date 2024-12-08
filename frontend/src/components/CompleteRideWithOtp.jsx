@@ -3,7 +3,7 @@ import { useState } from "react";
 import { API_URL } from "../utils/constants";
 import { useRecoilState } from "recoil";
 import { destinationCoordinatesAtom } from "../store/atom/CoordinatesContext";
-
+import { toast } from "react-toastify";
 export default function CompleteRideWithOtp({ completeRideData, fare, onComplete , setCompleteRideData }) {
     const [otp, setOtp] = useState('');
     const [error, setError] = useState(null);
@@ -15,7 +15,7 @@ export default function CompleteRideWithOtp({ completeRideData, fare, onComplete
             setOtp(value);
         }
     };
-
+    
     const handleSubmit = async () => {
         if (otp.length === 6) {
             try {
@@ -25,55 +25,55 @@ export default function CompleteRideWithOtp({ completeRideData, fare, onComplete
                     }
                 });
 
-                console.log(response);
+                console.log(response.data.destinationCoordinates);
                 setDestinationCoordinates(response?.data?.destinationCoordinates)
 
                 setCompleteRideData(null);
                 
             } catch (error) {
-                console.error("Error completing the ride:", error);
+                console.log("Error completing the ride:", error);
                 const error_message = error?.response?.data?.message || error?.response?.data?.errors[0]?.message;
                 setError(error_message);
+                toast.error("Failed to start the ride.")
             }
         } else {
             setError("OTP must be 6 digits.");
         }
     };
-
     return (
-        <div className=" w-full z-10 absolute bottom-0 bg-white py-12 px-8 rounded-t-3xl shadow-2xl">
-            <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-800">Start Your Ride</h2>
-                <p className="text-gray-600 mt-2">Enter the 6-digit OTP shared with passenger</p>
+        <div className="w-full z-10 absolute bottom-0 bg-white py-6 px-4 rounded-t-2xl shadow-lg">
+            <div className="mb-4">
+                <h2 className="text-xl font-semibold text-gray-800">Start Your Ride</h2>
+                <p className="text-sm text-gray-500">Enter the 6-digit OTP shared with passenger</p>
             </div>
 
-            <div className="py-6 border-b flex justify-center">
+            <div className="py-3 border-b flex justify-center">
                 <input
                     type="text"
                     maxLength="6"
                     value={otp}
                     onChange={(e) => handleChange(e.target.value)}
-                    className="w-56 h-14 border-2 border-gray-300 rounded-lg text-center text-2xl font-bold focus:border-blue-500 focus:outline-none transition-colors"
-                    placeholder="Enter 6-digit OTP"
+                    className="w-44 h-10 border border-gray-300 rounded-md text-center text-lg focus:border-blue-400 focus:outline-none"
+                    placeholder="Enter OTP"
                 />
             </div>
 
             {error && (
-                <div className="py-4 text-red-500 text-center font-medium">
+                <div className="py-2 text-red-500 text-sm text-center">
                     {error}
                 </div>
             )}
 
-            <div className="py-6">
-                <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-lg">
-                    <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
-                    <span className="text-lg font-medium">Fare: ₹{fare}</span>
+            <div className="py-3">
+                <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-md">
+                    <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                    <span className="text-base">Fare: ₹{fare}</span>
                 </div>
             </div>
 
             <button
                 onClick={handleSubmit}
-                className="w-full bg-black text-white py-5 rounded-xl font-semibold text-lg hover:bg-gray-800 transition-colors shadow-md"
+                className="w-full bg-black text-white py-3 rounded-lg text-base hover:bg-gray-800 transition-colors"
             >
                 Start Ride
             </button>
