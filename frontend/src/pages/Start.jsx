@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LiveTracking from "../components/LiveTracking";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -11,7 +11,7 @@ const Start = () => {
   const [userCoordinates, setUserCoordinates] = useRecoilState(userCoordinatesAtom);
   const [pickupCoordinates, setPickupCoordinates] = useRecoilState(pickupCoordinatesAtom);
   const [destinationCoordinates, setDestinationCoordinates] = useRecoilState(destinationCoordinatesAtom);
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCoordinates = async () => {

@@ -78,7 +78,7 @@ const CaptainSignup = () => {
     };
 
     return (
-        <div className="relative h-[100vh] flex items-center flex-col justify-center">
+        <div className="relative h-[90vh] flex items-center flex-col justify-center">
             <img className="absolute top-0 left-0 h-10 p-1 ml-2 my-5" src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Logo" />
             <div className="flex flex-col items-center justify-center bg-gray-50">
                 <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-md">
@@ -196,7 +196,7 @@ const CaptainSignup = () => {
                 </p>
             </div>
             <Link to="/login" className="absolute w-[45%] bottom-7 flex items-center justify-center ">
-                <button className="py-2 px-4 w-full bg-gray-300 text-black border border-gray-300 rounded-lg shadow-lg hover:bg-black hover:text-white transition-all duration-200">
+                <button className="py-2 mt-7 px-4 w-full max-w-[450px] bg-gray-300 text-black border border-gray-300 rounded-lg shadow-lg hover:bg-black hover:text-white transition-all duration-200">
                     Sign in as User
                 </button>
             </Link>
