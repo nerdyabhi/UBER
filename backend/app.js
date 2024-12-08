@@ -18,7 +18,7 @@ connectToDB();
 
 // Basic Middlewares
 app.use(cors(corsOptions));
-
+app.options('*', cors(corsOptions)); 
 
 
 app.use(express.json())
@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 
 app.get("/" , (req, res)=>{
-res.send("Hello world");
+res.send("Hello world Abhi Here !");
 })
 
 app.use('/user', userRouter);

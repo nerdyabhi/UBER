@@ -2,6 +2,7 @@
 const allowedOrigins = [
     'https://sasta-uber.vercel.app',
     'https://uber.abhi.works',
+    'http://localhost:5173'
 ];
 
 const corsOptions = {
@@ -32,4 +33,4 @@ const corsOptions = {
     preflightContinue: false,
     optionsSuccessStatus: 204
 };
-module.exports =  corsOptions;
+module.exports = corsOptions;
