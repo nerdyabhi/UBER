@@ -1,7 +1,8 @@
-![image](https://github.com/user-attachments/assets/02637e89-ea1f-4a12-8b93-15f490bccf5b)
+<img src="https://helios-i.mashable.com/imagery/articles/03y6VwlrZqnsuvnwR8CtGAL/hero-image.fill.size_1248x702.v1623372852.jpg" alt="Logo" width="150" height="75">
 
+Live Link 🚀 : https://uber.abhi.works
 
-## ✨ Key Features
+##  Functional Requirements.
 
 -  Real-time ride tracking and mapping
 -  Live driver-passenger matching
@@ -9,18 +10,30 @@
 -  Secure user authentication
 -  Responsive cross-platform design
 
-####  Quick Start
+
+### Architecture
+![image](https://github.com/user-attachments/assets/02637e89-ea1f-4a12-8b93-15f490bccf5b)
+![image](https://github.com/user-attachments/assets/c607344c-a89f-4a61-8324-10984916cdd4)
+
+
+### Quick Start
+#### - Frontend 
 
 ```bash
 git clone https://github.com/nerdyabhi/uber.git
-cd uber
+```
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+#### - Backend 
+```bash
 cd backend
 npm install
 node server.js
 cd ..
-cd frontend
-npm install
-npm run dev
 ```
 
 ### Environment Variables
@@ -65,7 +78,9 @@ GET /api/maps/autocomplete       # Get location suggestions
 ```
 
 
----
+
+### Don't Forget to '⭐' this
+
 
 ### 🚀 **Socket Events Documentation**
 
@@ -77,5 +92,6 @@ GET /api/maps/autocomplete       # Get location suggestions
 | `ride-confirmed`          | Ride confirmation             | `{ rideId: string, captainId: string }`                                    |
 
 ---
+
 
 

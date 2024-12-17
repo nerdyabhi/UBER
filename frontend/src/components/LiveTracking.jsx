@@ -9,7 +9,6 @@ import { useRecoilState } from 'recoil';
 import { AUTO_IMG, CAR_IMG, MOTO_IMG } from '../utils/constants';
 
 
-
 // Fix for default marker icons
 
 const LiveTracking = ({captainCoordinates , captainLocationName,  vehicleType}) => {
