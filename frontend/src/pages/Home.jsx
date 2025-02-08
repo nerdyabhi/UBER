@@ -2,13 +2,9 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { userContextAtom } from "../store/atom/UserContext";
 import axios from "axios";
 import { API_URL } from "../utils/constants";
-import {  useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import LocationSearchPanel from "../components/LocationSearchPanel";
 import RideComponent from "../components/RideComponent"
 import ConfirmedVehicle from "../components/confirmedVehicle";
-import WaitingForDriver from "../components/WaitingForDriver";
-import useAutoComplete from "../hooks/useAutoComplete";
 import { SocketContext } from "../store/atom/SocketContext";
 import OngoingRide from "../components/OngoingRide";
 import LiveTracking from "../components/LiveTracking";
@@ -18,8 +14,7 @@ import { destinationAtom, destinationCoordinatesAtom, pickupAtom, pickupCoordina
 import Draggable from 'react-draggable';
 import { ToastContainer  , toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import ChatComponent from "../components/ChatComponent";
-import Footer from "../components/footer";
+import { LinearGradient } from "react-text-gradients";
 
 const Home = ()=>{
     const user = useRecoilValue(userContextAtom);
@@ -151,11 +146,11 @@ const Home = ()=>{
        <div className="h-[100vh] w-full relative dark:text-white dark:bg-slate-900">
           <Navbar/>
 
-          <div className="flex w-full h-[100vh] flex-col md:flex-row items-start justify-center gap-5">
-            <div className="md:w-[30%] w-full  flex flex-col items-center justify-center">
-                <h1 className="font-bold text-2xl dark:text-white text-center p-4">Book a Sasta Uber For You.</h1>
+          <div className="flex px-2 w-full h-[100vh] flex-col md:flex-row items-start justify-start gap-5">
+            <div className="lg:w-[20%] md:w-[30%] w-full  flex flex-col items-center justify-center">
+                <h1 className="font-bold hidden md:block dark:text-white text-center text-3xl p-4">Book a <LinearGradient gradient={['to left', '#17acff ,#ff68f0']}>Ride</LinearGradient> now.</h1>
               <Form/>
-              <button onClick={findTripHandler} className="bg-black w-[350px] items-center text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition"> Find Trip </button>
+              <button onClick={findTripHandler} className="bg-black dark:text-white   w-[170px] lg:w-[240px] align-start justify-start text-white py-3 px-6 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition"> Find Trip </button>
             </div>
             
             <div className="flex  items-start w-full md:w-[90%] h-[90vh] ">

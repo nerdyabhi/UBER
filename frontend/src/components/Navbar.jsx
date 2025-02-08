@@ -42,32 +42,38 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-white dark:bg-slate-900 dark:text-white shadow-md">
-            <div className="max-w-7xl mx-auto px-4">
-                <div className="flex items-center justify-between h-14">
-                    {/* Logo */}
-                    <Link to="/" className="font-semibold font-sans text-xl">
-                        Sasta Uber
-                    </Link>
+        <nav className="bg-white/90 backdrop-blur-sm z-[101] dark:bg-slate-900/90 dark:text-white border-b border-gray-200 dark:border-gray-700">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="flex items-center justify-between h-16">
+                    <div className="flex items-center">
+                        <Link to="/" className="flex items-center">
+                        <span className="font-bold text-2xl tracking-tight text-gray-900 dark:text-white">
+                                Uber
+                            </span>
+                        </Link>
+                    </div>
 
                     {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-4">
+                    <div className="hidden md:flex items-center space-x-6">
                         {renderLinks()}
-                        <Link to={user ? "/profile" : captain ? "/captain/profile" : "#"} className="text-gray-700 dark:text-white hover:text-black">
-                            <i className="fas fa-user text-xl"></i>
+                        <Link to={user ? "/profile" : captain ? "/captain/profile" : "#"} 
+                            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+                            <i className="fas fa-user text-lg"></i>
                         </Link>
-                        <button onClick={toggleTheme} className="text-gray-700 hover:text-black">
+                        <button onClick={toggleTheme} 
+                            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                             {theme === 'dark' ? (
-                                <i className="fas fa-sun text-xl"></i>
+                                <i className="fas fa-sun text-lg"></i>
                             ) : (
-                                <i className="fas fa-moon text-xl"></i>
+                                <i className="fas fa-moon text-lg"></i>
                             )}
                         </button>
                     </div>
 
                     {/* Mobile menu button */}
                     <div className="md:hidden">
-                        <button onClick={toggleMenu} className="text-gray-700 dark:text-white hover:text-black">
+                        <button onClick={toggleMenu} 
+                            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                             <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-xl`}></i>
                         </button>
                     </div>
@@ -75,13 +81,13 @@ const Navbar = () => {
 
                 {/* Mobile Menu */}
                 {isMenuOpen && (
-                    <div className="md:hidden pb-4">
-                        <div className="flex flex-col space-y-3">
+                    <div className="md:hidden pb-4 animate-fadeIn">
+                        <div className="flex flex-col space-y-4 pt-2 border-t border-gray-200 dark:border-gray-700">
                             {renderLinks()}
-                            <Link to='#' className="text-gray-700 dark:text-white hover:text-black">
+                            <Link to='#' className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                                 Profile
                             </Link>
-                            <button onClick={toggleTheme} className="text-gray-700 dark:text-white hover:text-black text-left">
+                            <button onClick={toggleTheme} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-left">
                                 {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                             </button>
                         </div>

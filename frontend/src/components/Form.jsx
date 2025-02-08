@@ -48,8 +48,8 @@ const Form = ()=>{
     }
 
     return (
-      <div className="flex  dark:text-black items-center justify-center w-full">
-      <form className="flex flex-col gap-4 p-4 w-[400px] ">
+      <div className="flex  dark:text-black items-start justify-start w-full">
+      <form className="flex flex-col gap-4 p-4 w-[100%] lg:w-[400px] ">
         <div className="relative ">
         <input
         type="text"
@@ -63,7 +63,7 @@ const Form = ()=>{
         onChange={(e)=>handleChange(e , "pickup")}
 
         placeholder="Enter pickup location"
-        className="w-full  text-black z-5 p-3 pl-8 border bg-gray-100 rounded-lg focus:outline-none focus:border-black"
+        className="w-full  text-black z-5 p-3 pl-8 border bg-white rounded-lg focus:outline-none focus:border-black"
         />
        {pickupPanel &&  <ul className="bg-white shadow-xl overflow-y-scroll max-h-200px] rounded-lg w-full p-4 absolute mt-1 z-20">
           {!pickupSuggestions && <h1 className="text-center text-gray-400">No results here</h1>}
@@ -95,8 +95,8 @@ const Form = ()=>{
           }, 300)
         }}
         onChange={(e)=>handleChange(e , "destination")}
-        placeholder="Enter destination"
-        className="w-full text-black p-3 pl-8 border z-5 bg-gray-100 rounded-lg focus:outline-none focus:border-black"
+        placeholder="Enter drop off location"
+        className="w-full text-black p-3 pl-8 border z-5 bg-white rounded-lg focus:outline-none focus:border-black"
         />
         {destinationPanel &&  <ul className="bg-white shadow-lg overflow-y-scroll max-h-[200px] rounded-lg w-full p-4 absolute mt-1 z-10">
           {!destinationSuggestions && <h1 className="text-center text-gray-400">No results here.</h1>}

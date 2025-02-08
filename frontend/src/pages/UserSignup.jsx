@@ -5,7 +5,7 @@ import { API_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userContextAtom } from "../store/atom/UserContext";
-
+import Navbar from "../components/Navbar";
 const UserSignup = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -56,24 +56,27 @@ const UserSignup = () => {
                 setLastName('');
                 setEmail('');
                 setPassword('');
-            }
+    }
 
     return (
-        <div className="relative h-[100vh] flex items-center flex-col justify-center">
+        <div className="w-full h-[100vh] dark:bg-gray-900">
+            <Navbar/>
+        <div className="relative h-[90vh] flex items-center flex-col justify-center">
             {/* Logo On top */}
-            <img className="absolute top-0 left-0 h-10 p-1 ml-2 my-5" src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Logo" />
+            {/* <img className="absolute top-0 left-0 h-10 p-1 ml-2 my-5" src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="Logo" /> */}
             {/* Header */}
-            <div className="flex flex-col items-center justify-center bg-gray-50">
-                <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-md">
+            
+            <div className="flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+                <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
                     <div>
-                        <h2 className="text-center text-3xl font-bold text-gray-900">
+                        <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">
                             Create an Account
                         </h2>
                     </div>
 
                     {/* Error Message Page */}
                     {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <div className="bg-red-100 border border-red-400 text-red-700 dark:bg-red-900 dark:text-red-200 px-4 py-3 rounded relative" role="alert">
                             <strong className="font-bold">Oops! </strong>
                             <span className="block sm:inline">{error}</span>
                             <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
@@ -85,7 +88,7 @@ const UserSignup = () => {
                         </div>
                     )}
 
-                    {/* Main form. */}
+                    {/* Main form */}
                     <form onSubmit={(e) => submitHandler(e)} className="mt-8 space-y-6">
                         <div className="rounded-md shadow-sm space-y-4">
                             <div className="flex space-x-4">
@@ -98,7 +101,7 @@ const UserSignup = () => {
                                         name="firstName"
                                         type="text"
                                         required
-                                        className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                         placeholder="First Name"
                                         value={firstName} 
                                         onChange={(e) => setFirstName(e.target.value)}
@@ -113,7 +116,7 @@ const UserSignup = () => {
                                         name="lastName"
                                         type="text"
                                         required
-                                        className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                         placeholder="Last Name"
                                         value={lastName} 
                                         onChange={(e) => setLastName(e.target.value)}
@@ -129,7 +132,7 @@ const UserSignup = () => {
                                     name="email"
                                     type="email"
                                     required
-                                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="Email address"
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)}
@@ -144,7 +147,7 @@ const UserSignup = () => {
                                     name="password"
                                     type="password"
                                     required
-                                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -153,17 +156,17 @@ const UserSignup = () => {
                         </div>
                         <button
                             type="submit"
-                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black dark:bg-gray-400 hover:bg-gray-800 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                         >
                             Sign up
                         </button>
                     </form>
                 </div>
 
-                {/* ALready Have an accound? */}
-                <p className="mt-2 text-center text-sm text-gray-600">
+                {/* Already Have an account? */}
+                <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
                     Already Have an Account?{" "}
-                    <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    <Link to="/login" className="font-medium text-indigo-900 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
                         Login Here
                     </Link>
                 </p>
@@ -171,8 +174,9 @@ const UserSignup = () => {
 
             {/* Captain Login Button */}
             <div className="absolute bottom-12">
-                <Link to='/captain/register' className="w-full bg-gray-200 px-10 py-2 rounded-lg font-semibold text-lg hover:bg-black hover:text-white transition-all duration-200">SignIn as a Captain</Link>
+                <Link to='/captain/register' className="w-full bg-gray-200 dark:bg-gray-700 dark:text-white px-10 py-2 rounded-lg font-semibold text-lg hover:bg-black hover:text-white dark:hover:bg-gray-600 transition-all duration-200">SignIn as a Captain</Link>
             </div>
+        </div>
         </div>
     )
 };

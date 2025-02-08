@@ -134,7 +134,8 @@ const LiveTracking = ({captainCoordinates , captainLocationName,  vehicleType}) 
     // If No Coordinates , show default map
     if((!pickupCoordinates && !destinationCoordinates)){
         return (
-            <div className=" top-5 z-100  h-[100%] w-[100%]">
+          
+            <div className=" shadow-xl  rounded-xl top-5 z-100  h-[100%] w-[100%]">
                 <MapContainer
                     center={[defaultCoordinates.ltd , defaultCoordinates.lng]}
                     zoom={13}

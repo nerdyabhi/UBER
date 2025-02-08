@@ -2,6 +2,11 @@
 
 Live Link 🚀 : https://uber.abhi.works
 
+### Languages and Tools.
+[![My Skills](https://skillicons.dev/icons?i=c,cpp,java,python,css,tailwind,js,mongo,react,express,postman,git,github,bash,linux)](https://skillicons.dev)
+
+
+
 ##  Functional Requirements.
 
 -  Real-time ride tracking and mapping
